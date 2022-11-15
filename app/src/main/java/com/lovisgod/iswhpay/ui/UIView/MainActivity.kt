@@ -3,26 +3,29 @@ package com.lovisgod.iswhpay.ui.UIView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import com.isw.iswkozen.core.data.utilsData.KeysUtils
 import com.lovisgod.iswhpay.IswHpayApplication
 import com.lovisgod.iswhpay.R
+import com.lovisgod.iswhpay.domain.SampleNetworkRepository
 import com.lovisgod.iswhpay.domain.use_cases.AllUseCases
 import com.lovisgod.iswhpay.ui.uiState.ReadCardStates
 import com.lovisgod.iswhpay.utils.ToastUtils
 import com.lovisgod.iswhpay.utils.models.TerminalInfo
 import com.lovisgod.iswhpay.utils.models.iccData.RequestIccData
-import com.lovisgod.iswhpay.utils.models.pay.CreditCard
-import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntitiy
+import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntity
 import com.lovisgod.iswhpay.utils.models.pay.TransactionResultCode
 import kotlinx.coroutines.*
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity(), ReadCardStates {
     lateinit var loadPinKeyBtn: Button
     lateinit var loadAid: Button
     lateinit var loadTerminalConfig: Button
     lateinit var startpay: Button
+    lateinit var downloadtoken: Button
     lateinit var useCases: AllUseCases
+    var amount by Delegates.notNull<Int>()
+    lateinit var respEntity: OnlineRespEntity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
         loadPinKeyBtn = findViewById(R.id.pinkey)
         loadTerminalConfig = findViewById(R.id.loadTerminal)
         startpay = findViewById(R.id.startPay)
+        downloadtoken = findViewById(R.id.downloadToken)
 
        handleClicks()
     }
@@ -54,11 +58,11 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
 
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
-                    var ipekKsn = KeysUtils.getIpekKsn(false)
-                    var ksn = ipekKsn.ksn
-                    var key = ipekKsn.ipek
-                    var isDukpt = true
-                    var ret = useCases.setPinKeyUseCase(isDukpt, key, ksn)
+                    val ipekKsn = KeysUtils.getIpekKsn(false)
+                    val ksn = ipekKsn.ksn
+                    val key = ipekKsn.ipek
+                    val isDukpt = true
+                    val ret = useCases.setPinKeyUseCase(isDukpt, key, ksn)
                     println("dukpt ret ::: $ret")
                 }
             }
@@ -69,17 +73,26 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
                    val terminalInfo = TerminalInfo()
-                   var ret  = useCases.setTerminalConfigUseCase(terminalInfo)
+
+                    val ret  = useCases.setTerminalConfigUseCase(terminalInfo)
                     println("config ret ::: $ret")
                 }
             }
         }
 
         startpay.setOnClickListener {
-
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
-                    useCases.emvPayUseCase(100L, this@MainActivity)
+                    amount = 100
+                    useCases.emvPayUseCase(amount.toLong(), this@MainActivity, this@MainActivity)
+                }
+            }
+        }
+
+        downloadtoken.setOnClickListener {
+            GlobalScope.launch {
+                withContext(Dispatchers.IO) {
+                    SampleNetworkRepository().getToken()
                 }
             }
         }
@@ -105,16 +118,26 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
         }
     }
 
-    override fun sendTransactionOnline(creditCard: CreditCard): OnlineRespEntitiy {
+    @OptIn(DelicateCoroutinesApi::class)
+    override fun sendTransactionOnline(emvData: RequestIccData): OnlineRespEntity {
         this.runOnUiThread {
             ToastUtils.showLong("Transaction need to go online", this)
             println("Transaction need to go online")
+            println("info::: iccdata going online ::: ${emvData.iccAsString}")
         }
-        return OnlineRespEntitiy().also {
-            it.respCode = "00"
-            it.iccData = "${creditCard.emvData.iccData}"
-        }
+//        GlobalScope.launch {
+//            return@launch withContext(Dispatchers.IO) {
+                val response = SampleNetworkRepository().makeTransactionOnline(emvData, amount)
+//               withContext(Dispatchers.Main) {
+                   respEntity = response
+                   respEntity
+//               }
+//            }
+//        }
+        println("info:::: re")
+        return respEntity
     }
+
 
     override fun onEmvProcessing(message: String) {
        this.runOnUiThread {

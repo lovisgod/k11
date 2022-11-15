@@ -58,7 +58,7 @@ class IswHpayApplication: Application() {
                     DeviceHelper.reset()
                     DeviceHelper.initDevices(this@IswHpayApplication)
                     container.horizonAppContainer.emvDataKeyManager.initialize()
-                    container.horizonAppContainer.emvPaymentHandler.initialize()
+                    container.horizonAppContainer.emvPaymentHandler.initialize(applicationContext)
                     this@IswHpayApplication.device!!.asBinder().linkToDeath(deathRecipient, 0)
                 } catch (e: RemoteException) {
                     e.printStackTrace()

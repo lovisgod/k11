@@ -1,5 +1,6 @@
 package com.lovisgod.iswhpay.data
 
+import android.content.Context
 import com.lovisgod.iswhpay.ui.uiState.ReadCardStates
 import com.lovisgod.iswhpay.utils.IswHpCodes
 import com.lovisgod.iswhpay.utils.models.TerminalInfo
@@ -46,9 +47,9 @@ class DataSource(val emvDataKeyManager: EmvDataKeyManager, val emvPaymentHandler
         }
     }
 
-    suspend fun pay(amount: Long, readCardStates: ReadCardStates) {
+    suspend fun pay(amount: Long, readCardStates: ReadCardStates, context: Context) {
         try {
-            emvPaymentHandler.pay(amount, readCardStates)
+            emvPaymentHandler.pay(amount, readCardStates, context)
         } catch (e: Exception) {
             e.printStackTrace()
             IswHpCodes.GENERAL_EMV_EXCEPTION

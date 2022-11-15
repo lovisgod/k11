@@ -11,6 +11,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.horizonpay.smartpossdk.aidl.cardreader.IAidlCardReader;
 import com.horizonpay.smartpossdk.aidl.emv.AidlCheckCardListener;
@@ -27,7 +30,9 @@ import com.horizonpay.smartpossdk.aidl.pinpad.IAidlPinpad;
 import com.horizonpay.smartpossdk.data.EmvConstant;
 import com.horizonpay.smartpossdk.data.PinpadConst;
 import com.horizonpay.utils.ConvertUtils;
-import com.lovisgod.iswhpay.BuildConfig;
+import com.lovisgod.iswhpay.ui.UIView.PasswordDialog;
+import com.lovisgod.iswhpay.ui.uiState.PinHandler;
+import com.lovisgod.iswhpay.utils.AppExecutors;
 import com.lovisgod.iswhpay.utils.AppLog;
 import com.lovisgod.iswhpay.utils.DeviceHelper;
 import com.lovisgod.iswhpay.utils.EmvUtil;
@@ -38,9 +43,10 @@ import com.lovisgod.iswhpay.utils.models.ConfigInfoHelper;
 import com.lovisgod.iswhpay.utils.models.TerminalInfo;
 import com.lovisgod.iswhpay.utils.models.pay.CardReadMode;
 import com.lovisgod.iswhpay.utils.models.pay.CreditCard;
-import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntitiy;
+import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntity;
 import com.lovisgod.iswhpay.utils.models.pay.TransactionResultCode;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +59,7 @@ public class PayProcessor {
 
         CandidateAID confirmApplicationSelection(List<CandidateAID> candidateList);
 
-        OnlineRespEntitiy onPerformOnlineProcessing(CreditCard creditCard);
+        OnlineRespEntity onPerformOnlineProcessing(CreditCard creditCard, Boolean isOnlinePin);
 
         void onCompleted(TransactionResultCode result, CreditCard creditCard);
 
@@ -61,17 +67,20 @@ public class PayProcessor {
 
     }
 
+
+
     private IAidlCardReader mCardReader;
     private IAidlEmvL2 mEmvL2;
     private IAidlPinpad mPinPad;
     private PayProcessorListener mListener;
     private long mAount;
+    private Boolean isOnlinePin;
     private CardReadMode mCardReadMode = CardReadMode.MANUAL;
-    private OnlineRespEntitiy mOnlineRespEntitiy;
+    private OnlineRespEntity mOnlineRespEntity;
     private long startTick;
     private final String LOG_TAG = PayProcessor.class.getSimpleName();
     private Context mContext;
-    private CreditCard creditCard;
+    public CreditCard creditCard;
 
     public PayProcessor(Context context) {
         mContext = context;
@@ -83,7 +92,7 @@ public class PayProcessor {
 
 
     private void init() {
-        mOnlineRespEntitiy = null;
+        mOnlineRespEntity = null;
         mCardReadMode = CardReadMode.MANUAL;
 
         try {
@@ -110,6 +119,33 @@ public class PayProcessor {
             e.printStackTrace();
         }
     }
+
+    private PinHandler pinHandler = new PinHandler() {
+        @Override
+        public void onCancel()  {
+            try {
+                mEmvL2.requestPinResp(null, false);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        @Override
+        public void onPinResponse(@NonNull String pinblock, @NonNull String ksn) {
+            System.out.println("this is called for pin response");
+            try {
+                mEmvL2.requestPinResp(pinblock.getBytes(StandardCharsets.UTF_8), false);
+                emvStartListener.onRequestOnline(new EmvTransOutputData());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            System.out.println("info:::: pinblock ::: "+ pinblock);
+            System.out.println("info::: ksndata:::::" + ksn);
+            creditCard.setPIN(pinblock);
+            creditCard.setKsnData(ksn);
+        }
+    };
 
     private AidlCheckCardListener.Stub checkCardListener = new AidlCheckCardListener.Stub() {
         @Override
@@ -216,6 +252,7 @@ public class PayProcessor {
         @Override
         public void onRequestPin(boolean isOnlinePIN, int leftTimes) throws RemoteException {
             mListener.onInputPin();
+            isOnlinePin = isOnlinePIN;
             System.out.println("info ::::: request pin called   offline pin?" + !isOnlinePIN );
             AppLog.d(LOG_TAG, "onCardHolderInputPin isOnlinePin: " + isOnlinePIN + "offlinePIN leftTimes: " + leftTimes);
 
@@ -252,19 +289,19 @@ public class PayProcessor {
             getEmvCardInfo();
             String respCode = "05";
             String iccData = "";
-            AppLog.d(LOG_TAG, "onRequestOnline PIN : " + creditCard.getPIN());
+            Log.d(LOG_TAG, "onRequestOnline PIN : " + creditCard.getPIN());
             AppLog.d(LOG_TAG, "onRequestOnline: true");
             AppLog.d(LOG_TAG, "time = " + (System.currentTimeMillis() - startTick) + "ms");
 //            if (BuildConfig.DEBUG == true) {
 //                System.out.println( "onRequestOnline: Simulate Online process>>>>");
 //                iccData = onlineProc();
 //            } else {
-                mOnlineRespEntitiy = mListener.onPerformOnlineProcessing(creditCard);
+                mOnlineRespEntity = mListener.onPerformOnlineProcessing(creditCard, isOnlinePin);
 //            }
 
-            if (mOnlineRespEntitiy != null) {
-                respCode = mOnlineRespEntitiy.getRespCode();
-                iccData = mOnlineRespEntitiy.getIccData();
+            if (mOnlineRespEntity != null) {
+                respCode = mOnlineRespEntity.getRespCode();
+                iccData = mOnlineRespEntity.getIccData();
             }
             AppLog.d(LOG_TAG, "resp Code: " + respCode);
             AppLog.d(LOG_TAG, "iccData: " + iccData);
@@ -458,10 +495,10 @@ public class PayProcessor {
             switch (emvTransOutputData.getAcType()) {
                 case EmvConstant.EmvACType.AAC: //Trans End
                     System.out.println("info ::::: ACC called");
-                    if (mOnlineRespEntitiy == null) {
+                    if (mOnlineRespEntity == null) {
                         System.out.println("info ::::: no response entity");
                         transactionResultCode = TransactionResultCode.DECLINED_BY_OFFLINE;
-                    } else if ("00".equals(mOnlineRespEntitiy.getRespCode())) {
+                    } else if ("00".equals(mOnlineRespEntity.getRespCode())) {
                         transactionResultCode = TransactionResultCode.DECLINED_BY_TERMINAL_NEED_REVERSE;
                     } else {
                         transactionResultCode = TransactionResultCode.DECLINED_BY_ONLINE;
@@ -471,7 +508,7 @@ public class PayProcessor {
                 case EmvConstant.EmvACType.TC:
                     //Trans accept
                     System.out.println("info ::::: TC called");
-                    if (mOnlineRespEntitiy == null) {
+                    if (mOnlineRespEntity == null) {
                         transactionResultCode = TransactionResultCode.APPROVED_BY_OFFLINE;
                     } else {
                         transactionResultCode = TransactionResultCode.APPROVED_BY_ONLINE;
@@ -481,8 +518,8 @@ public class PayProcessor {
                 case EmvConstant.EmvACType.ARQC: //ARQC
                     System.out.println("info ::::: ARQC called");
                     AppLog.d(LOG_TAG, "onFinish: ARQC");
-                    mOnlineRespEntitiy = mListener.onPerformOnlineProcessing(creditCard);
-                    if (mOnlineRespEntitiy != null && "00".equals(mOnlineRespEntitiy.getRespCode())) {
+                    mOnlineRespEntity = mListener.onPerformOnlineProcessing(creditCard, isOnlinePin);
+                    if (mOnlineRespEntity != null && "00".equals(mOnlineRespEntity.getRespCode())) {
                         transactionResultCode = TransactionResultCode.APPROVED_BY_ONLINE;
                     } else {
                         transactionResultCode = TransactionResultCode.DECLINED_BY_OFFLINE;
@@ -519,10 +556,10 @@ public class PayProcessor {
                     AppLog.d(LOG_TAG, "FallBack onFindMagCard: " + builder.toString());
                     stopSearch();
                     magCardInputPIN(creditCard.getCardNumber());
-                    mOnlineRespEntitiy = mListener.onPerformOnlineProcessing(creditCard);
+                    mOnlineRespEntity = mListener.onPerformOnlineProcessing(creditCard, true);
 //            TransactionResultCode transactionResultCode = TransactionResultCode.DECLINED_BY_OFFLINE;
                     TransactionResultCode transactionResultCode = TransactionResultCode.APPROVED_BY_ONLINE;
-                    if (mOnlineRespEntitiy != null && "00".equals(mOnlineRespEntitiy.getRespCode())) {
+                    if (mOnlineRespEntity != null && "00".equals(mOnlineRespEntity.getRespCode())) {
                         transactionResultCode = TransactionResultCode.APPROVED_BY_ONLINE;
                     } else {
                         transactionResultCode = TransactionResultCode.DECLINED_BY_OFFLINE;
@@ -570,7 +607,7 @@ public class PayProcessor {
 
             AppLog.d(LOG_TAG, "emvFinish: Other result");
             System.out.println("info::::: emv finish other result");
-            if (mOnlineRespEntitiy != null && "00".equals(mOnlineRespEntitiy.getRespCode())) {
+            if (mOnlineRespEntity != null && "00".equals(mOnlineRespEntity.getRespCode())) {
                 transactionResultCode = TransactionResultCode.DECLINED_BY_TERMINAL_NEED_REVERSE;
             } else {
                 transactionResultCode = ERROR_UNKNOWN;
@@ -606,7 +643,7 @@ public class PayProcessor {
                     AppLog.d(LOG_TAG, "PIN input:" + (noPin == true ? "NO" : "Yes"));
                     AppLog.d(LOG_TAG, "PIN Block:" + HexUtil.bytesToHexString(data));
                     // go for online processing.
-                    mOnlineRespEntitiy = mListener.onPerformOnlineProcessing(creditCard);
+                    mOnlineRespEntity = mListener.onPerformOnlineProcessing(creditCard, true);
                 }
 
                 @Override
@@ -634,45 +671,56 @@ public class PayProcessor {
     private void inputOnlinePIN(String sPAN) {
         Bundle bundle = setPinpadUI(true);
         System.out.println("info::::: input online pin called");
+
+
         try {
             mPinPad.dukptKsnIncrease(PinpadConst.DukptKeyIndex.DUKPT_KEY_INDEX_0);
-            mPinPad.inputOnlinePin(bundle, new int[]{4, 6}, 30, sPAN, 0, PinpadConst.PinAlgorithmMode.ISO9564FMT1, new AidlPinPadInputListener.Stub() {
-                @Override
-                public void onConfirm(byte[] data, boolean noPin, String s) throws RemoteException {
-                    System.out.println("info::: datatatata:::::" + data);
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("\ntime = " + (System.currentTimeMillis() - startTick) + "ms");
-                    builder.append("\nPIN input:" + (noPin == true ? "NO" : "Yes"));
-                    builder.append("\nPIN Block:" + HexUtil.bytesToHexString(data));
-                    builder.append("\nksn: " + s);
-                    AppLog.d(LOG_TAG, builder.toString());
-                    mEmvL2.requestPinResp(data, noPin);
-                    System.out.println("info:::: pinblock ::: "+ HexUtil.bytesToHexString(data));
-                    System.out.println("info::: ksndata:::::" + s);
-                    creditCard.setPIN(HexUtil.bytesToHexString(data));
-                    creditCard.setKsnData(s);
-                }
 
-                @Override
-                public void onSendKey(int keyCode) throws RemoteException {
-                    System.out.println("info::::: send key for pin called" + keyCode);
-                    AppLog.d(LOG_TAG, "onSendKey:" + keyCode);
-                }
+            AppExecutors.getInstance().mainThread().execute(
+                    () -> {
+                        PasswordDialog dailog = new PasswordDialog(mContext, 0, 0, mPinPad, mEmvL2, sPAN, pinHandler);
+                        dailog.showDialog();
+                    }
 
-                @Override
-                public void onCancel() throws RemoteException {
-                    System.out.println("info::::: on cancel for pin called");
-                    AppLog.d(LOG_TAG, "inputOnlinePin onCancel: ");
-                    mEmvL2.requestPinResp(null, false);
-                }
-
-                @Override
-                public void onError(int errorCode) throws RemoteException {
-                    System.out.println("info::::: on error for pin called");
-                    AppLog.d(LOG_TAG, "onError: code:" + errorCode);
-                    mEmvL2.requestPinResp(null, false);
-                }
-            });
+            );
+            //  mPinPad.inputOnlinePin(bundle, new int[]{4, 6}, 300, sPAN, 0, PinpadConst.PinAlgorithmMode.ISO9564FMT1, new AidlPinPadInputListener.Stub() {
+//                @Override
+//                public void onConfirm(byte[] data, boolean noPin, String s) throws RemoteException {
+//                    System.out.println("info::: datatatata:::::" + data);
+//                    StringBuilder builder = new StringBuilder();
+//                    builder.append("\ntime = " + (System.currentTimeMillis() - startTick) + "ms");
+//                    builder.append("\nPIN input:" + (noPin == true ? "NO" : "Yes"));
+//                    builder.append("\nPIN Block:" + HexUtil.bytesToHexString(data));
+//                    builder.append("\nksn: " + s);
+//                    AppLog.d(LOG_TAG, builder.toString());
+//                    mEmvL2.requestPinResp(data, noPin);
+//                    System.out.println("info:::: pinblock ::: "+ HexUtil.bytesToHexString(data));
+//                    System.out.println("info::: ksndata:::::" + s);
+//                    EmvUtil.dukptDecrypt(HexUtil.bytesToHexString(data), mPinPad);
+//                    creditCard.setPIN(HexUtil.bytesToHexString(data));
+//                    creditCard.setKsnData(s);
+//                }
+//
+//                @Override
+//                public void onSendKey(int keyCode) throws RemoteException {
+//                    System.out.println("info::::: send key for pin called" + keyCode);
+//                    AppLog.d(LOG_TAG, "onSendKey:" + keyCode);
+//                }
+//
+//                @Override
+//                public void onCancel() throws RemoteException {
+//                    System.out.println("info::::: on cancel for pin called");
+//                    AppLog.d(LOG_TAG, "inputOnlinePin onCancel: ");
+//                    mEmvL2.requestPinResp(null, false);
+//                }
+//
+//                @Override
+//                public void onError(int errorCode) throws RemoteException {
+//                    System.out.println("info::::: on error for pin called");
+//                    AppLog.d(LOG_TAG, "onError: code:" + errorCode);
+//                    mEmvL2.requestPinResp(null, false);
+//                }
+//            });
         } catch (RemoteException e) {
             e.printStackTrace();
         }

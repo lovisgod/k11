@@ -2,6 +2,7 @@ package com.lovisgod.iswhpay.utils.models.iccData
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.lovisgod.iswhpay.utils.models.pay.CreditCard
 import org.simpleframework.xml.Element
 
 class RequestIccData(
@@ -50,7 +51,7 @@ class RequestIccData(
 
         var EMV_CARD_PIN_DATA: EmvPinData = EmvPinData()
 
-//        var EMC_CARD_ : EmvCard ? = null
+        var EMC_CARD_ : CreditCard ? = null
 
         var haspin: Boolean? = true
 

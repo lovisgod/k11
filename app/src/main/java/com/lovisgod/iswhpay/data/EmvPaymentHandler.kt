@@ -1,5 +1,6 @@
 package com.lovisgod.iswhpay.data
 
+import android.content.Context
 import android.os.RemoteException
 import com.horizonpay.smartpossdk.aidl.emv.CandidateAID
 import com.horizonpay.smartpossdk.aidl.emv.IAidlEmvL2
@@ -10,7 +11,7 @@ import com.lovisgod.iswhpay.utils.models.iccData.EmvPinData
 import com.lovisgod.iswhpay.utils.models.iccData.getIccData
 import com.lovisgod.iswhpay.utils.models.pay.CardReadMode
 import com.lovisgod.iswhpay.utils.models.pay.CreditCard
-import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntitiy
+import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntity
 import com.lovisgod.iswhpay.utils.models.pay.TransactionResultCode
 
 class EmvPaymentHandler {
@@ -21,7 +22,7 @@ class EmvPaymentHandler {
 //    private var pinpad: IAidlPinpad? = null
 //    private var isSupportPinPad = false
 
-    fun initialize() {
+    fun initialize(context: Context) {
         mEmvL2 = DeviceHelper.getEmvHandler()
         isSupport = mEmvL2!!.isSupport()
         payProcessor = PayProcessor()
@@ -31,7 +32,8 @@ class EmvPaymentHandler {
 //        }
     }
 
-    fun pay (amount: Long, readCardStates: ReadCardStates) {
+    fun pay (amount: Long, readCardStates: ReadCardStates, context: Context) {
+        payProcessor = PayProcessor(context)
         this.readCardStates = readCardStates
         payProcessor?.pay(amount, processorListener)
     }
@@ -105,13 +107,21 @@ class EmvPaymentHandler {
             return candidateList[selectedIndex]
         }
 
-        override fun onPerformOnlineProcessing(creditCard: CreditCard): OnlineRespEntitiy? {
+        override fun onPerformOnlineProcessing(creditCard: CreditCard, isOnlinePin: Boolean): OnlineRespEntity? {
             // IMPLEMENT THIS SO SEND TRANSACTION ONLINE
             // get tlv data
-            println("info ::::: iccdata ::: ${EmvUtil.getTlvStringData()}")
-            var responseEntity = this@EmvPaymentHandler.readCardStates?.sendTransactionOnline(creditCard)
+            println("info ::::: iccdataforonline ::: ${EmvUtil.getTlvStringData()}")
+            var requestIccData = getIccData()
+            requestIccData.apply {
+                EMC_CARD_ = creditCard
+                iccAsString = EmvUtil.getTlvStringData()
+                CARD_HOLDER_NAME = creditCard?.holderName.toString()
+                EMV_CARD_PIN_DATA = if (isOnlinePin) EmvPinData(creditCard.ksnData.toString(), creditCard.pin.toString()) else EmvPinData()
+            }
+            var responseEntity = this@EmvPaymentHandler.readCardStates?.sendTransactionOnline(requestIccData)
             println("online process")
-            val entitiy = OnlineRespEntitiy()
+            val entitiy =
+                OnlineRespEntity()
             //            entitiy.setRespCode("05");
             entitiy.setRespCode("00")
             entitiy.setIccData("")
@@ -131,7 +141,6 @@ class EmvPaymentHandler {
                     var requestIccData = getIccData()
                     requestIccData.apply {
                         iccAsString = EmvUtil.getTlvStringData()
-                        CARD_HOLDER_NAME = creditCard?.holderName.toString()
                     }
                     this@EmvPaymentHandler.readCardStates?.onEmvProcessed(requestIccData, TransactionResultCode.APPROVED_BY_OFFLINE)
                     resultText.append(TransactionResultCode.APPROVED_BY_OFFLINE.toString())

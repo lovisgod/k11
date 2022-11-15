@@ -1,11 +1,15 @@
 package com.lovisgod.iswhpay.utils;
 
 
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
 import com.horizonpay.smartpossdk.aidl.emv.EmvTags;
 import com.horizonpay.smartpossdk.aidl.emv.EmvTermConfig;
+import com.horizonpay.smartpossdk.aidl.pinpad.DukptEncryptObj;
+import com.horizonpay.smartpossdk.aidl.pinpad.IAidlPinpad;
+import com.horizonpay.smartpossdk.data.PinpadConst;
 import com.horizonpay.utils.FormatUtils;
 import com.lovisgod.iswhpay.utils.models.TerminalInfo;
 
@@ -280,6 +284,24 @@ public class EmvUtil {
         }
         System.out.println(builder);
         return builder;
+    }
+
+
+    static public void dukptDecrypt(String encrypt, IAidlPinpad pinpad) {
+        try {
+            String data = encrypt;
+
+            int type = PinpadConst.DukptType.DUKPT_DES_KEY_DATA1;
+            int alg = PinpadConst.AlgoMode.ALG_CBC;
+            int oper = PinpadConst.EncryptMode.MODE_DECRYPT;
+
+            DukptEncryptObj dukptEncryptObj = new DukptEncryptObj(type, oper, alg, data);
+            Bundle bundle = pinpad.dukptCalcDes(dukptEncryptObj);
+            System.out.println("info::::: pin decrypt data :::: " + bundle.getString(DukptEncryptObj.DUKPT_DATA));
+            System.out.println("info::::: pin decrypt ksn :::: " + bundle.getString(DukptEncryptObj.DUKPT_KSN));
+        } catch (RemoteException e) {
+
+        }
     }
 
     }

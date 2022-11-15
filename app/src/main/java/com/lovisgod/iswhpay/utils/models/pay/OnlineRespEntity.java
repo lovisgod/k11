@@ -1,6 +1,6 @@
 package com.lovisgod.iswhpay.utils.models.pay;
 
-public class OnlineRespEntitiy {
+public class OnlineRespEntity {
     String respCode;
     String iccData;
 

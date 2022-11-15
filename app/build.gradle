@@ -77,6 +77,9 @@ dependencies {
 
     api 'com.pixplicity.easyprefs:EasyPrefs:1.10.0'
 
+    api 'com.github.devicesandtokens:ISW_EMV_UTIL_LIB:0.1'
+
+
 
     // retrofit xml converter
     api("com.squareup.retrofit2:converter-simplexml:2.5.0") {
