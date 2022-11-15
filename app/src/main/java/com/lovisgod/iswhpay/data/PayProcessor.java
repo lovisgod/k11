@@ -136,14 +136,18 @@ public class PayProcessor {
             System.out.println("this is called for pin response");
             try {
                 mEmvL2.requestPinResp(pinblock.getBytes(StandardCharsets.UTF_8), false);
+
+                System.out.println("info:::: pinblock ::: "+ pinblock);
+                System.out.println("info::: ksndata:::::" + ksn);
+                creditCard.setPIN(pinblock);
+                creditCard.setKsnData(ksn);
+
+
                 emvStartListener.onRequestOnline(new EmvTransOutputData());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            System.out.println("info:::: pinblock ::: "+ pinblock);
-            System.out.println("info::: ksndata:::::" + ksn);
-            creditCard.setPIN(pinblock);
-            creditCard.setKsnData(ksn);
+
         }
     };
 

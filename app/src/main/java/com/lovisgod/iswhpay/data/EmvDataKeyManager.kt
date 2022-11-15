@@ -7,12 +7,10 @@ import com.horizonpay.smartpossdk.aidl.emv.IAidlEmvL2
 import com.horizonpay.smartpossdk.aidl.pinpad.DukptObj
 import com.horizonpay.smartpossdk.aidl.pinpad.IAidlPinpad
 import com.horizonpay.smartpossdk.data.PinpadConst
-import com.lovisgod.iswhpay.utils.AidsUtil
-import com.lovisgod.iswhpay.utils.DeviceHelper
-import com.lovisgod.iswhpay.utils.EmvUtil
-import com.lovisgod.iswhpay.utils.IswHpCodes
+import com.lovisgod.iswhpay.utils.*
 import com.lovisgod.iswhpay.utils.models.ConfigInfoHelper.saveTerminalInfo
 import com.lovisgod.iswhpay.utils.models.TerminalInfo
+import com.pixplicity.easyprefs.library.Prefs
 
 class EmvDataKeyManager {
     private var mEmvL2: IAidlEmvL2? = null
@@ -108,7 +106,10 @@ class EmvDataKeyManager {
             PinpadConst.DukptKeyType.DUKPT_IPEK_PLAINTEXT,
             PinpadConst.DukptKeyIndex.DUKPT_KEY_INDEX_1
         )
-        return pinpad!!.dukptKeyLoad(dukptObj)
+        val res  = pinpad!!.dukptKeyLoad(dukptObj)
+        pinpad!!.dukptKsnIncrease(PinpadConst.DukptKeyIndex.DUKPT_KEY_INDEX_0)
+        Prefs.putString("KSN", StringManipulator.dropLastCharacter(ksn))
+        return  res
     }
 
     fun setPinKey(isDukpt: Boolean, key: String = "", ksn: String = ""): Int {

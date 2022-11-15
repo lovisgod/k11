@@ -238,14 +238,12 @@ public class PasswordDialog{
             System.out.println("pin card :" + pinCard);
             String IPEKK = KeysUtils.INSTANCE.getIpekKsn(false).getIpek();
             String newKSN = null;
+//                newKSN = this.pinPad.dukptCurrentKsn(PinpadConst.DukptKeyIndex.DUKPT_KEY_INDEX_0);
             try {
-                newKSN = this.pinPad.dukptCurrentKsn(PinpadConst.DukptKeyIndex.DUKPT_KEY_INDEX_0);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-
-            String block = Converter.INSTANCE.GetPinBlock(IPEKK, newKSN, pinX, pinCard);
-            try {
+                String KSNX = Prefs.getString("KSN", "");
+                newKSN = KSNX + Constants.INSTANCE.getNextKsnCounter();
+                System.out.println("ksn value is ::::" + newKSN);
+                String block = Converter.INSTANCE.GetPinBlock(IPEKK, newKSN, pinX, pinCard);
                 onPinSuccessISW(block, StringManipulator.INSTANCE.dropFirstCharacter(newKSN));
             } catch (RemoteException e) {
                 e.printStackTrace();

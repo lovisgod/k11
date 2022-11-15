@@ -92,4 +92,17 @@ object Constants {
         const val ISW_TERMINAL_PORT_CTMS = 55533
         const val PAYMENT_CODE = "051626554287"
     }
+
+    /**
+     * This method returns the next STAN (System Trace Audit Number)
+     */
+    fun getNextKsnCounter(): String {
+        var ksn = Prefs.getInt("KSNCOUNTER", 0)
+
+        // compute and save new stan
+        val newKsn = if (ksn >= 9) 1 else ++ksn
+        Prefs.putInt("KSNCOUNTER", ksn)
+
+        return newKsn.toString()
+    }
 }

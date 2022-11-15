@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
     lateinit var downloadtoken: Button
     lateinit var useCases: AllUseCases
     var amount by Delegates.notNull<Int>()
-    lateinit var respEntity: OnlineRespEntity
+     var respEntity: OnlineRespEntity = OnlineRespEntity()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -125,15 +125,15 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
             println("Transaction need to go online")
             println("info::: iccdata going online ::: ${emvData.iccAsString}")
         }
-//        GlobalScope.launch {
-//            return@launch withContext(Dispatchers.IO) {
+        GlobalScope.launch {
+            return@launch withContext(Dispatchers.IO) {
                 val response = SampleNetworkRepository().makeTransactionOnline(emvData, amount)
-//               withContext(Dispatchers.Main) {
+               withContext(Dispatchers.Main) {
                    respEntity = response
                    respEntity
-//               }
-//            }
-//        }
+               }
+            }
+        }
         println("info:::: re")
         return respEntity
     }
