@@ -22,7 +22,7 @@ object EmvRequest {
          val requestBody = """<transferRequest>
                                 <terminalInformation>
                                      <batteryInformation>-1</batteryInformation>
-                                     <currencyCode>${terminalInfo.transCurrencyCode}</currencyCode>
+                                     <currencyCode>566</currencyCode>
                                      <languageInfo>EN</languageInfo>
                                      <merchantId>${terminalInfo.merchantId}</merchantId>
                                      <merhcantLocation>${terminalInfo.merchantAddress1}</merhcantLocation>
@@ -32,7 +32,7 @@ object EmvRequest {
                                      <posGeoCode>00234000000000566</posGeoCode>
                                      <printerStatus>1</printerStatus>
                                      <terminalId>${terminalInfo.terminalCode}</terminalId>
-                                     <terminalType>HORIZONPAY</terminalType>
+                                     <terminalType>HORIZON</terminalType>
                                      <transmissionDate>${DateUtils.universalDateFormat.format(Date())}</transmissionDate>
                                      <uniqueId>$serialId</uniqueId>
                                 </terminalInformation>
@@ -69,10 +69,10 @@ object EmvRequest {
                                 <fromAccount>${AccountType.Default.name}</fromAccount>
                                 <toAccount></toAccount>
                                 <minorAmount>${amount}</minorAmount>
-                                <receivingInstitutionId>627629</receivingInstitutionId>
+                                <receivingInstitutionId>506146</receivingInstitutionId>
                                 $pinData
                                 <keyLabel>${getKeyLabl(false)}</keyLabel>
-                                <destinationAccountNumber>2089430464</destinationAccountNumber>
+                                <destinationAccountNumber>6501440400</destinationAccountNumber>
                                  <extendedTransactionType>6103</extendedTransactionType>
 </transferRequest>"""
          return requestBody

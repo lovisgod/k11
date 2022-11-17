@@ -96,4 +96,8 @@ object DeviceUtils {
                                                    requestCode: Int, context: Activity) {
         ActivityCompat.requestPermissions(context, permissionsArray, requestCode)
     }
+
+    fun showText(message: String) {
+        println(message)
+    }
 }

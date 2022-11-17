@@ -30,21 +30,24 @@ import com.horizonpay.smartpossdk.aidl.pinpad.IAidlPinpad;
 import com.horizonpay.smartpossdk.data.EmvConstant;
 import com.horizonpay.smartpossdk.data.PinpadConst;
 import com.horizonpay.utils.ConvertUtils;
-import com.lovisgod.iswhpay.ui.UIView.PasswordDialog;
-import com.lovisgod.iswhpay.ui.uiState.PinHandler;
-import com.lovisgod.iswhpay.utils.AppExecutors;
+import com.isw.iswkozen.core.data.utilsData.KeysUtils;
+import com.isw.pinencrypter.Converter;
 import com.lovisgod.iswhpay.utils.AppLog;
+import com.lovisgod.iswhpay.utils.Constants;
 import com.lovisgod.iswhpay.utils.DeviceHelper;
+import com.lovisgod.iswhpay.utils.DeviceUtils;
 import com.lovisgod.iswhpay.utils.EmvUtil;
 import com.lovisgod.iswhpay.utils.HexUtil;
 import com.lovisgod.iswhpay.utils.TlvData;
 import com.lovisgod.iswhpay.utils.TlvDataList;
+import com.lovisgod.iswhpay.utils.TripleDES;
 import com.lovisgod.iswhpay.utils.models.ConfigInfoHelper;
 import com.lovisgod.iswhpay.utils.models.TerminalInfo;
 import com.lovisgod.iswhpay.utils.models.pay.CardReadMode;
 import com.lovisgod.iswhpay.utils.models.pay.CreditCard;
 import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntity;
 import com.lovisgod.iswhpay.utils.models.pay.TransactionResultCode;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -119,37 +122,6 @@ public class PayProcessor {
             e.printStackTrace();
         }
     }
-
-    private PinHandler pinHandler = new PinHandler() {
-        @Override
-        public void onCancel()  {
-            try {
-                mEmvL2.requestPinResp(null, false);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        @Override
-        public void onPinResponse(@NonNull String pinblock, @NonNull String ksn) {
-            System.out.println("this is called for pin response");
-            try {
-                mEmvL2.requestPinResp(pinblock.getBytes(StandardCharsets.UTF_8), false);
-
-                System.out.println("info:::: pinblock ::: "+ pinblock);
-                System.out.println("info::: ksndata:::::" + ksn);
-                creditCard.setPIN(pinblock);
-                creditCard.setKsnData(ksn);
-
-
-                emvStartListener.onRequestOnline(new EmvTransOutputData());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-
-        }
-    };
 
     private AidlCheckCardListener.Stub checkCardListener = new AidlCheckCardListener.Stub() {
         @Override
@@ -678,53 +650,54 @@ public class PayProcessor {
 
 
         try {
-            mPinPad.dukptKsnIncrease(PinpadConst.DukptKeyIndex.DUKPT_KEY_INDEX_0);
+//            mPinPad.dukptKsnIncrease(PinpadConst.DukptKeyIndex.DUKPT_KEY_INDEX_0);
+              String ksnCount = Constants.INSTANCE.getNextKsnCounter();
+              String ksnString = Prefs.getString("KSN", "") + ksnCount;
 
-            AppExecutors.getInstance().mainThread().execute(
-                    () -> {
-                        PasswordDialog dailog = new PasswordDialog(mContext, 0, 0, mPinPad, mEmvL2, sPAN, pinHandler);
-                        dailog.showDialog();
+              mPinPad.inputOnlinePin(bundle, new int[]{4, 4}, 10, sPAN, 0, PinpadConst.PinAlgorithmMode.ISO9564FMT1, new AidlPinPadInputListener.Stub() {
+                @Override
+                public void onConfirm(byte[] data, boolean noPin, String s) throws RemoteException {
+                    System.out.println("info::: datatatata:::::" + data);
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("\ntime = " + (System.currentTimeMillis() - startTick) + "ms");
+                    builder.append("\nPIN input:" + (noPin == true ? "NO" : "Yes"));
+                    builder.append("\nPIN Block:" + HexUtil.bytesToHexString(data));
+                    builder.append("\nksn: " + s);
+                    AppLog.d(LOG_TAG, builder.toString());
+                    mEmvL2.requestPinResp(data, noPin);
+                    System.out.println("info:::: pinblock ::: "+ HexUtil.bytesToHexString(data));
+                    System.out.println("info::: ksndata:::::" + ksnString);
+                    try {
+                        String pin = TripleDES.decrypt(sPAN, HexUtil.bytesToHexString(data), "D0FB24EA73F599C1D0FB24EA73F599C1");
+                        String pinBlock = Converter.INSTANCE.GetPinBlock(KeysUtils.INSTANCE.getIpekKsn(false).getIpek(), ksnString, pin, sPAN);
+                        DeviceUtils.INSTANCE.showText("info::::::: " + pinBlock);
+                        creditCard.setPIN(pinBlock);
+                        creditCard.setKsnData(ksnString);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                }
 
-            );
-            //  mPinPad.inputOnlinePin(bundle, new int[]{4, 6}, 300, sPAN, 0, PinpadConst.PinAlgorithmMode.ISO9564FMT1, new AidlPinPadInputListener.Stub() {
-//                @Override
-//                public void onConfirm(byte[] data, boolean noPin, String s) throws RemoteException {
-//                    System.out.println("info::: datatatata:::::" + data);
-//                    StringBuilder builder = new StringBuilder();
-//                    builder.append("\ntime = " + (System.currentTimeMillis() - startTick) + "ms");
-//                    builder.append("\nPIN input:" + (noPin == true ? "NO" : "Yes"));
-//                    builder.append("\nPIN Block:" + HexUtil.bytesToHexString(data));
-//                    builder.append("\nksn: " + s);
-//                    AppLog.d(LOG_TAG, builder.toString());
-//                    mEmvL2.requestPinResp(data, noPin);
-//                    System.out.println("info:::: pinblock ::: "+ HexUtil.bytesToHexString(data));
-//                    System.out.println("info::: ksndata:::::" + s);
-//                    EmvUtil.dukptDecrypt(HexUtil.bytesToHexString(data), mPinPad);
-//                    creditCard.setPIN(HexUtil.bytesToHexString(data));
-//                    creditCard.setKsnData(s);
-//                }
-//
-//                @Override
-//                public void onSendKey(int keyCode) throws RemoteException {
-//                    System.out.println("info::::: send key for pin called" + keyCode);
-//                    AppLog.d(LOG_TAG, "onSendKey:" + keyCode);
-//                }
-//
-//                @Override
-//                public void onCancel() throws RemoteException {
-//                    System.out.println("info::::: on cancel for pin called");
-//                    AppLog.d(LOG_TAG, "inputOnlinePin onCancel: ");
-//                    mEmvL2.requestPinResp(null, false);
-//                }
-//
-//                @Override
-//                public void onError(int errorCode) throws RemoteException {
-//                    System.out.println("info::::: on error for pin called");
-//                    AppLog.d(LOG_TAG, "onError: code:" + errorCode);
-//                    mEmvL2.requestPinResp(null, false);
-//                }
-//            });
+                @Override
+                public void onSendKey(int keyCode) throws RemoteException {
+                    System.out.println("info::::: send key for pin called" + keyCode);
+                    AppLog.d(LOG_TAG, "onSendKey:" + keyCode);
+                }
+
+                @Override
+                public void onCancel() throws RemoteException {
+                    System.out.println("info::::: on cancel for pin called");
+                    AppLog.d(LOG_TAG, "inputOnlinePin onCancel: ");
+                    mEmvL2.requestPinResp(null, false);
+                }
+
+                @Override
+                public void onError(int errorCode) throws RemoteException {
+                    System.out.println("info::::: on error for pin called");
+                    AppLog.d(LOG_TAG, "onError: code:" + errorCode);
+                    mEmvL2.requestPinResp(null, false);
+                }
+            });
         } catch (RemoteException e) {
             e.printStackTrace();
         }

@@ -109,6 +109,8 @@ class EmvDataKeyManager {
         val res  = pinpad!!.dukptKeyLoad(dukptObj)
         pinpad!!.dukptKsnIncrease(PinpadConst.DukptKeyIndex.DUKPT_KEY_INDEX_0)
         Prefs.putString("KSN", StringManipulator.dropLastCharacter(ksn))
+        PinPad3DesHandler.inititial()
+        PinPad3DesHandler.loadWorkKey()
         return  res
     }
 
