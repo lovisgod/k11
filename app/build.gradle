@@ -1,19 +1,19 @@
 plugins {
-    id 'com.android.application'
+//    id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    //    id 'com.android.library'
+    id 'com.android.library'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
 }
 
 android {
     namespace 'com.lovisgod.iswhpay'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
-        applicationId "com.lovisgod.iswhpay"
+//        applicationId "com.lovisgod.iswhpay"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -44,6 +44,11 @@ android {
         main {
             jniLibs.srcDirs = ['libs']
         }
+    }
+
+    lint {
+        // If set to true (default), stops the build if errors are found.
+        abortOnError false
     }
 }
 
