@@ -1,6 +1,7 @@
 package com.lovisgod.iswhpay
 
 import android.app.Application
+import android.content.Context
 import android.content.ContextWrapper
 import android.os.IBinder.DeathRecipient
 import android.os.RemoteException
@@ -13,15 +14,13 @@ import com.lovisgod.iswhpay.utils.DeviceHelper
 import com.lovisgod.iswhpay.utils.HorizonAppContainer
 import com.pixplicity.easyprefs.library.Prefs
 
-class IswHpayApplication: Application() {
+object IswHpayApplication {
     private val TAG = "IswHPayApplication"
-    private var INSTANCE: IswHpayApplication? = null
     private var device: IAidlDevice? = null
+    private var context: Application? = null
 
 
-     fun getINSTANCE(): IswHpayApplication? {
-        return INSTANCE
-    }
+
 
     fun getDevice(): IAidlDevice? {
         return device
@@ -33,32 +32,31 @@ class IswHpayApplication: Application() {
     }
 
 
-    override fun onCreate() {
+    fun onCreate(context: Context, application: Application) {
+        this.context = application
         println("this is called first")
-        super.onCreate()
 
         Prefs.Builder()
-            .setContext(this)
+            .setContext(context)
             .setMode(ContextWrapper.MODE_PRIVATE)
-            .setPrefsName(packageName)
+            .setPrefsName("com.lovisgod.iswPay")
             .setUseDefaultSharedPreference(true)
             .build()
 
-        INSTANCE = this
-        BaseUtils.init(this)
-        bindDriverService()
+        BaseUtils.init(this.context!!)
+        bindDriverService(context)
     }
 
-    fun bindDriverService() {
+    fun bindDriverService(context: Context) {
         println("this is called third")
-        PosAidlDeviceServiceUtil.connectDeviceService(this, object : DeviceServiceListen {
+        PosAidlDeviceServiceUtil.connectDeviceService(context, object : DeviceServiceListen {
             override fun onConnected(device: IAidlDevice) {
                 this@IswHpayApplication.device = device
                 try {
                     DeviceHelper.reset()
-                    DeviceHelper.initDevices(this@IswHpayApplication)
+                    DeviceHelper.initDevices(this@IswHpayApplication, this@IswHpayApplication.context)
                     container.horizonAppContainer.emvDataKeyManager.initialize()
-                    container.horizonAppContainer.emvPaymentHandler.initialize(applicationContext)
+                    container.horizonAppContainer.emvPaymentHandler.initialize(context)
                     this@IswHpayApplication.device!!.asBinder().linkToDeath(deathRecipient, 0)
                 } catch (e: RemoteException) {
                     e.printStackTrace()
@@ -81,7 +79,7 @@ class IswHpayApplication: Application() {
             this@IswHpayApplication.device = null
 
             //reBind driver Service
-            bindDriverService()
+            this@IswHpayApplication.context?.applicationContext?.let { bindDriverService(it) }
         }
     }
 }

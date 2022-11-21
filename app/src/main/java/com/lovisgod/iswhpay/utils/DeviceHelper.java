@@ -1,6 +1,7 @@
 package com.lovisgod.iswhpay.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.os.RemoteException;
 
 import com.horizonpay.smartpossdk.aidl.IAidlDevice;
@@ -42,11 +43,13 @@ public class DeviceHelper {
     private static IAidlSerialPort serialPort;
 
     private static IswHpayApplication application;
+    private static Application mApplication;
 
     @SuppressLint("NewApi")
-    public static void initDevices(IswHpayApplication app) throws RemoteException {
+    public static void initDevices(IswHpayApplication app, Application xApplication) throws RemoteException {
         System.out.println("this is called fifth");
         application = app;
+        mApplication = xApplication;
         if (application == null) {
             return;
         }
@@ -72,7 +75,7 @@ public class DeviceHelper {
                 throw e;
             }
         } else {
-            application.bindDriverService();
+            application.bindDriverService(mApplication.getApplicationContext());
             reset();
         }
     }
@@ -87,7 +90,7 @@ public class DeviceHelper {
         }
 
         if (application.getDevice() == null) {
-            application.bindDriverService();
+            application.bindDriverService(mApplication.getApplicationContext());
             reset();
             throw new RemoteException("Device service connection failed, please try again later.");
         }

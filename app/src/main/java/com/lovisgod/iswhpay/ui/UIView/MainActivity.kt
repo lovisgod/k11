@@ -1,5 +1,6 @@
 package com.lovisgod.iswhpay.ui.UIView
 
+import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        IswHpayApplication.onCreate(this, SampleApplication())
 
         loadAid = findViewById(R.id.loadaid)
         loadPinKeyBtn = findViewById(R.id.pinkey)
@@ -155,5 +158,9 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
         println("code :::: ${code.name} :::::: data :::: ${data.TRANSACTION_AMOUNT}:::: ${data.CARD_HOLDER_NAME}:::: ${data.EMV_CARD_PIN_DATA.CardPinBlock}")
     }
 
+
+}
+
+class SampleApplication: Application() {
 
 }
