@@ -1,7 +1,7 @@
 plugins {
-    id 'com.android.application'
+//    id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-//    id 'com.android.library'
+    id 'com.android.library'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
 }
@@ -11,7 +11,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.lovisgod.iswhpay"
+//        applicationId "com.lovisgod.iswhpay"
         minSdk 21
         targetSdk 33
         versionCode 1
