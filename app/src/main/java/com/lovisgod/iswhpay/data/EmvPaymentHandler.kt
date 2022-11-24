@@ -119,18 +119,18 @@ class EmvPaymentHandler {
                 EMV_CARD_PIN_DATA = if (isOnlinePin) EmvPinData(creditCard.ksnData.toString(), creditCard.pin.toString()) else EmvPinData()
             }
             var responseEntity = this@EmvPaymentHandler.readCardStates?.sendTransactionOnline(requestIccData)
-            println("online process")
-            val entitiy =
-                OnlineRespEntity()
-            //            entitiy.setRespCode("05");
-            entitiy.setRespCode("00")
-            entitiy.setIccData("")
+            println("online process ::: response code :::: ${responseEntity?.respCode}")
+//            val entitiy =
+//                OnlineRespEntity()
+//            //            entitiy.setRespCode("05");
+//            entitiy.setRespCode("00")
+//            entitiy.setIccData("")
 //            if ("00" == entitiy.getRespCode()) {
 //                onCompleted(TransactionResultCode.APPROVED_BY_ONLINE, creditCard)
 //            } else {
 //                onCompleted(TransactionResultCode.DECLINED_BY_ONLINE, creditCard)
 //            }
-            return entitiy
+            return responseEntity
         }
 
         override fun onCompleted(result: TransactionResultCode?, creditCard: CreditCard?) {

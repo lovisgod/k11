@@ -26,7 +26,9 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
     lateinit var downloadtoken: Button
     lateinit var useCases: AllUseCases
     var amount by Delegates.notNull<Int>()
-     var respEntity: OnlineRespEntity = OnlineRespEntity()
+     var respEntity: OnlineRespEntity = OnlineRespEntity().apply {
+         respCode = "12"
+     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

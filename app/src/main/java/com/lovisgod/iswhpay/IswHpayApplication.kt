@@ -23,6 +23,7 @@ object IswHpayApplication {
 
 
     fun getDevice(): IAidlDevice? {
+        println("this is getting here here here here")
         return device
     }
 
