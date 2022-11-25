@@ -36,6 +36,7 @@ public class AidsUtil {
         capkEntityList.addAll(generateJcbTestCapks());
         capkEntityList.addAll(generateJcbLiveCapks());
         capkEntityList.addAll(generateCupTestCapks());
+        capkEntityList.addAll(generateVerveProductionCapks());
         return capkEntityList;
     }
 
@@ -202,6 +203,47 @@ public class AidsUtil {
                 .maxTargetPer(99)
                 .build();
         aidEntityList.add(appCupQuasiCredit);
+
+        // VERVE AID
+        AidEntity appVERVE = new AidEntity.Builder()
+                .AID("A0000003710002")
+                .selFlag(0)
+                .appVersion("0096")
+                .DDOL("9F3704")
+                .tacDefault("BCF8049800")
+                .tacOnline("BCF8049800")
+                .tacDenial("0000008000")
+                .rdCtlsFloorLimit(0)
+                .rdCtlsCvmLimit(0)
+                .rdCtlsTransLimit(10000)
+                .rdVisaTransLimit(10000)
+                .floorLimit(10000)
+                .onlinePinCap(true)
+                .maxTargetPer(80)
+                .targetPer(80)
+                .threshold(100)
+                .build();
+        aidEntityList.add(appVERVE);
+
+        AidEntity appVERVE2 = new AidEntity.Builder()
+                .AID("A0000003710001")
+                .selFlag(0)
+                .appVersion("0001")
+                .DDOL("9F3704")
+                .tacDefault("fc50aca000")
+                .tacOnline("f850acf800")
+                .tacDenial("0400000000")
+                .rdCtlsFloorLimit(0)
+                .rdCtlsCvmLimit(0)
+                .rdCtlsTransLimit(10000)
+                .rdVisaTransLimit(10000)
+                .floorLimit(10000)
+                .onlinePinCap(true)
+                .maxTargetPer(80)
+                .targetPer(80)
+                .threshold(100)
+                .build();
+        aidEntityList.add(appVERVE2);
 
         return aidEntityList;
 
@@ -671,6 +713,61 @@ public class AidsUtil {
                 .checkSum("BD331F9996A490B33C13441066A09AD3FEB5F66C")
                 .build();
         capkEntityList.add(capkCup0x0B);
+
+        return capkEntityList;
+    }
+
+    //VERVE CAPK
+    private static List<CapkEntity> generateVerveProductionCapks() {
+        List<CapkEntity> capkEntityList =new ArrayList<>();
+        // MasterCard Production Capk
+        CapkEntity capkVerve0x00 = CapkEntity.builder()
+                .RID("A000000371")
+                .capkIndex(0x03)
+                .arithInd(0x01)
+                .hashInd(0x01)
+                .expDate("171231")
+                .modul("d06238b856cf2c8890a7f668ca17c19247498d193a7c11e7105dedeee6a873e8189e50493e9b17547c42ea4fa88bbef30bb6bc2409246ccc95f36622a7f4d92d46444f20b1b24bf63c5b28395d8ef18c23205c2119dfe5fba2fbfc311b2fe8a6a75b35a7dab72d421792a500cdfd8133b8a97d84a49c0bd22d52d06ea5e0ef3e471d47d8370c37aa48b564689d0035d9")
+                .exponent("03")
+                .checkSum("319F3C608B67F1118C729B0E1516EAB07CB290C8")
+                .build();
+        capkEntityList.add(capkVerve0x00);
+
+        CapkEntity capkVerve0x01 = CapkEntity.builder()
+                .RID("A000000371")
+                .capkIndex(0x06)
+                .arithInd(0x01)
+                .hashInd(0x01)
+                .expDate("281228")
+                .modul("D2DA0134B4DFC93A75EE8960C99896D50A91527B87BA7B16CDB77E5B6FDB750EB70B54026CADDA1D562C77A2C6DA541E94BC415D43E68489B16980F2E887C09E4CF90E2E639B179277BBA0E982CCD1F80521D1457209125B3ABCD309E1B92B5AEDA2EB1CBF933BEAD9CE7365E52B7D17FCB405AA28E5DE6AA3F08E764F745E70859ABCBA41E570A6E4367B3D6FECE723B73ABF3EB53DCDE3816E8A813460447021509D0DFDF2EEEE74CC35485FB55C26836EB3BF9C7DEBEE6C0B77B7BE059233801CF76B321FCA25FB1E63117AE1865E23161EC39D7B1FB84256C2BE72BF8EC771548DB9F00BEF77C509FADA15E2B53FF950D383F96211D3")
+                .exponent("03")
+                .checkSum("F5BAB84ECE5F8BD45511E5CA861B80C7E6C51F55")
+                .build();
+        capkEntityList.add(capkVerve0x01);
+
+        CapkEntity capkVerve0x02 = CapkEntity.builder()
+                .RID("A000000371")
+                .capkIndex(0x04)
+                .arithInd(0x01)
+                .hashInd(0x01)
+                .expDate("171231")
+                .modul("D13CD5E1B921E4E0F0D40E2DE14CCE73E3A34ED2DCFA826531D8195641091E37C8474D19B686E8243F089A69F7B18D2D34CB4824F228F7750F96D1EFBDFF881F259A8C04DE64915A3A3D7CB846135F4083C93CDE755BC808886F600542DFF085558D5EA7F45CB15EC835064AA856D602A0A44CD021F54CF8EC0CC680B54B3665ABE74A7C43D02897FF84BB4CB98BC91D")
+                .exponent("03")
+                .checkSum("8B36A3E3D814CE6C6EBEAAF27674BB7BC67275B1")
+                .build();
+        capkEntityList.add(capkVerve0x02);
+
+        CapkEntity capkVerve0x03 = CapkEntity.builder()
+                .RID("A000000371")
+                .capkIndex(0x05)
+                .arithInd(0x01)
+                .hashInd(0x01)
+                .expDate("241231")
+                .modul("B036A8CAE0593A480976BFE84F8A67759E52B3D9F4A68CCC37FE720E594E5694CD1AE20E1B120D7A18FA5C70E044D3B12E932C9BBD9FDEA4BE11071EF8CA3AF48FF2B5DDB307FC752C5C73F5F274D4238A92B4FCE66FC93DA18E6C1CC1AA3CFAFCB071B67DAACE96D9314DB494982F5C967F698A05E1A8A69DA931B8E566270F04EAB575F5967104118E4F12ABFF9DEC92379CD955A10675282FE1B60CAD13F9BB80C272A40B6A344EA699FB9EFA6867")
+                .exponent("03")
+                .checkSum("676822D335AB0D2C3848418CB546DF7B6A6C32C0")
+                .build();
+        capkEntityList.add(capkVerve0x03);
 
         return capkEntityList;
     }
