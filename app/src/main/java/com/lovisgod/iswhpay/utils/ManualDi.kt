@@ -22,7 +22,8 @@ class HorizonAppContainer {
              downloadCapkUseCase = DownloadCapkUseCase(repository),
              setTerminalConfigUseCase = SetTerminalConfigUseCase(repository),
              setPinKeyUseCase = SetPinKeyUseCase(repository),
-             emvPayUseCase = EmvPayUseCase(repository)
+             emvPayUseCase = EmvPayUseCase(repository),
+             printBitMapUseCase = PrintBitMapUseCase(repository)
          )
     }
 

@@ -1,9 +1,14 @@
 package com.lovisgod.iswhpay.data
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.RemoteException
 import com.horizonpay.smartpossdk.aidl.emv.CandidateAID
 import com.horizonpay.smartpossdk.aidl.emv.IAidlEmvL2
+import com.horizonpay.smartpossdk.aidl.printer.AidlPrinterListener
+import com.horizonpay.smartpossdk.aidl.printer.IAidlPrinter
+import com.horizonpay.smartpossdk.data.PrinterConst
+import com.lovisgod.iswhpay.ui.uiState.PrintingState
 import com.lovisgod.iswhpay.ui.uiState.ReadCardStates
 import com.lovisgod.iswhpay.utils.DeviceHelper
 import com.lovisgod.iswhpay.utils.EmvUtil
@@ -19,10 +24,13 @@ class EmvPaymentHandler {
     private var isSupport = false
     private var payProcessor: PayProcessor? = null
     private var readCardStates: ReadCardStates?  = null
+    private var printingState: PrintingState? = null
+    private var printer : IAidlPrinter? = null
 //    private var pinpad: IAidlPinpad? = null
 //    private var isSupportPinPad = false
 
     fun initialize(context: Context) {
+        printer = DeviceHelper.getPrinter()
         mEmvL2 = DeviceHelper.getEmvHandler()
         isSupport = mEmvL2!!.isSupport()
         payProcessor = PayProcessor()
@@ -36,6 +44,50 @@ class EmvPaymentHandler {
         payProcessor = PayProcessor(context)
         this.readCardStates = readCardStates
         payProcessor?.pay(amount, processorListener)
+    }
+
+    private fun setPrintLevel(level: Int) {
+        try {
+            printer!!.printGray = level
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun handlePrinting(bitmap: Bitmap, printingState: PrintingState){
+        this.printingState = printingState
+        return try {
+            return printer!!.printBmp(
+                true,
+                false,
+                bitmap,
+                0,
+                object : AidlPrinterListener.Stub() {
+                    @Throws(RemoteException::class)
+                    override fun onError(i: Int) {
+                        when (i) {
+                            PrinterConst.RetCode.ERROR_PRINT_NOPAPER,
+                            PrinterConst.RetCode.ERROR_DEV ,
+                            PrinterConst.RetCode.ERROR_DEV_IS_BUSY,
+                            PrinterConst.RetCode.ERROR_OTHER -> {
+                                this@EmvPaymentHandler.printingState!!.onError(i)
+                            }
+                            else -> {
+                                this@EmvPaymentHandler.printingState!!.onError(i)
+                            }
+                        }
+                    }
+
+                    @Throws(RemoteException::class)
+                    override fun onPrintSuccess() {
+                        println("info:::::: printing success::::::")
+                        this@EmvPaymentHandler.printingState!!.onSuccess()
+                    }
+                })
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+            this.printingState!!.onError(PrinterConst.RetCode.ERROR_OTHER)
+        }
     }
 
     private val processorListener: PayProcessor.PayProcessorListener = object : PayProcessor.PayProcessorListener {

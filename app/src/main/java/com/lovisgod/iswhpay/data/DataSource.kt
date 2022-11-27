@@ -1,6 +1,8 @@
 package com.lovisgod.iswhpay.data
 
 import android.content.Context
+import android.graphics.Bitmap
+import com.lovisgod.iswhpay.ui.uiState.PrintingState
 import com.lovisgod.iswhpay.ui.uiState.ReadCardStates
 import com.lovisgod.iswhpay.utils.IswHpCodes
 import com.lovisgod.iswhpay.utils.models.TerminalInfo
@@ -50,6 +52,15 @@ class DataSource(val emvDataKeyManager: EmvDataKeyManager, val emvPaymentHandler
     suspend fun pay(amount: Long, readCardStates: ReadCardStates, context: Context) {
         try {
             emvPaymentHandler.pay(amount, readCardStates, context)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            IswHpCodes.GENERAL_EMV_EXCEPTION
+        }
+    }
+
+    suspend fun printBitMap(bitmap: Bitmap, printingState: PrintingState) {
+        try {
+            emvPaymentHandler.handlePrinting(bitmap, printingState)
         } catch (e: Exception) {
             e.printStackTrace()
             IswHpCodes.GENERAL_EMV_EXCEPTION

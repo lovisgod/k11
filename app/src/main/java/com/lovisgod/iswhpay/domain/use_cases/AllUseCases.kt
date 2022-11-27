@@ -5,5 +5,6 @@ data class AllUseCases(
    val downloadCapkUseCase: DownloadCapkUseCase,
    val setTerminalConfigUseCase: SetTerminalConfigUseCase,
    val setPinKeyUseCase: SetPinKeyUseCase,
-   val emvPayUseCase: EmvPayUseCase
+   val emvPayUseCase: EmvPayUseCase,
+   val printBitMapUseCase: PrintBitMapUseCase
 )

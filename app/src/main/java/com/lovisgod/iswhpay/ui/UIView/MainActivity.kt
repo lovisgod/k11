@@ -4,11 +4,13 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ScrollView
 import com.isw.iswkozen.core.data.utilsData.KeysUtils
 import com.lovisgod.iswhpay.IswHpayApplication
 import com.lovisgod.iswhpay.R
 import com.lovisgod.iswhpay.domain.SampleNetworkRepository
 import com.lovisgod.iswhpay.domain.use_cases.AllUseCases
+import com.lovisgod.iswhpay.ui.uiState.PrintingState
 import com.lovisgod.iswhpay.ui.uiState.ReadCardStates
 import com.lovisgod.iswhpay.utils.ToastUtils
 import com.lovisgod.iswhpay.utils.models.TerminalInfo
@@ -18,12 +20,14 @@ import com.lovisgod.iswhpay.utils.models.pay.TransactionResultCode
 import kotlinx.coroutines.*
 import kotlin.properties.Delegates
 
-class MainActivity : AppCompatActivity(), ReadCardStates {
+class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
     lateinit var loadPinKeyBtn: Button
     lateinit var loadAid: Button
     lateinit var loadTerminalConfig: Button
     lateinit var startpay: Button
     lateinit var downloadtoken: Button
+    lateinit var printBtn: Button
+    lateinit var xxxxxx : ScrollView
     lateinit var useCases: AllUseCases
     var amount by Delegates.notNull<Int>()
      var respEntity: OnlineRespEntity = OnlineRespEntity().apply {
@@ -40,6 +44,8 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
         loadTerminalConfig = findViewById(R.id.loadTerminal)
         startpay = findViewById(R.id.startPay)
         downloadtoken = findViewById(R.id.downloadToken)
+        printBtn = findViewById(R.id.printScreen)
+        xxxxxx = findViewById(R.id.vvvv)
 
        handleClicks()
     }
@@ -101,6 +107,17 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
                 }
             }
         }
+
+        printBtn.setOnClickListener {
+            GlobalScope.launch {
+                withContext(Dispatchers.IO) {
+                    val bitmap = ToastUtils.loadBitmapFromView(xxxxxx)
+                    if (bitmap != null) {
+                        useCases.printBitMapUseCase(bitmap, this@MainActivity)
+                    }
+                }
+            }
+        }
     }
 
     override fun onInsertCard() {
@@ -158,6 +175,14 @@ class MainActivity : AppCompatActivity(), ReadCardStates {
         }
         var datax  = data as RequestIccData
         println("code :::: ${code.name} :::::: data :::: ${data.TRANSACTION_AMOUNT}:::: ${data.CARD_HOLDER_NAME}:::: ${data.EMV_CARD_PIN_DATA.CardPinBlock}")
+    }
+
+    override fun onSuccess(code: Int) {
+        println("printing successful::: $code")
+    }
+
+    override fun onError(error: Int) {
+        println("printing error::: $error")
     }
 
 
