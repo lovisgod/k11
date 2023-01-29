@@ -5,13 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ScrollView
-import com.isw.iswkozen.core.data.utilsData.KeysUtils
 import com.lovisgod.iswhpay.IswHpayApplication
 import com.lovisgod.iswhpay.R
 import com.lovisgod.iswhpay.domain.SampleNetworkRepository
 import com.lovisgod.iswhpay.domain.use_cases.AllUseCases
 import com.lovisgod.iswhpay.ui.uiState.PrintingState
 import com.lovisgod.iswhpay.ui.uiState.ReadCardStates
+import com.lovisgod.iswhpay.utils.KeysUtilx
 import com.lovisgod.iswhpay.utils.ToastUtils
 import com.lovisgod.iswhpay.utils.models.TerminalInfo
 import com.lovisgod.iswhpay.utils.models.iccData.RequestIccData
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
 
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
-                    val ipekKsn = KeysUtils.getIpekKsn(false)
+                    val ipekKsn = KeysUtilx.getIpekKsn(false)
                     val ksn = ipekKsn.ksn
                     val key = ipekKsn.ipek
                     val isDukpt = true

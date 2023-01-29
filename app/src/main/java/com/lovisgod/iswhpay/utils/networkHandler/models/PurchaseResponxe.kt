@@ -1,4 +1,3 @@
-package com.isw.iswkozen.core.network.models
 
 import android.os.Parcelable
 import com.lovisgod.iswhpay.utils.networkHandler.models.TransactionResultData
@@ -15,7 +14,7 @@ import org.simpleframework.xml.Root
     Namespace( prefix = "ns3", reference = "http://tempuri.org/ns.xsd")
 )
 @Parcelize
-data class PurchaseResponse(
+data class PurchaseResponxe(
 
     @field:Element(name = "description", required = false)
     var description: String = "",
@@ -75,9 +74,9 @@ data class PurchaseResponse(
 
 
 
-        fun fromResponseData(transactionResultData: TransactionResultData?): PurchaseResponse {
+        fun fromResponseData(transactionResultData: TransactionResultData?): PurchaseResponxe {
              return transactionResultData.let { response ->
-                return@let PurchaseResponse(
+                return@let PurchaseResponxe(
                     description = response!!.responseMessage,
                     responseCode = response.responseCode,
                     referenceNumber = response.ref.toString(),

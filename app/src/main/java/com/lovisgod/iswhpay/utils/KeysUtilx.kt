@@ -1,10 +1,11 @@
-package com.isw.iswkozen.core.data.utilsData
+package com.lovisgod.iswhpay.utils;
+
 
 import android.annotation.SuppressLint
 import java.nio.charset.Charset
 
 
-object KeysUtils {
+object KeysUtilx {
 
     data class IpekKsn(
         var ipek: String,

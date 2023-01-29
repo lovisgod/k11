@@ -1,6 +1,6 @@
 package com.lovisgod.iswhpay.utils.networkHandler
 
-import com.isw.iswkozen.core.network.models.PurchaseResponse
+import PurchaseResponxe
 import com.lovisgod.iswhpay.utils.Constants
 import com.lovisgod.iswhpay.utils.networkHandler.models.TokenConfigResponse
 import com.lovisgod.iswhpay.utils.networkHandler.models.TokenRequestModel
@@ -18,5 +18,5 @@ interface kimonoInterface {
     @Headers("Content-Type: application/xml", "Accept: application/xml", "Accept-Charset: utf-8")
     @POST(Constants.KIMONO_END_POINT)
     fun makeCashout(@Body request: RequestBody, @Header("Authorization") token: String ):
-            Simple<PurchaseResponse>
+            Simple<PurchaseResponxe>
 }

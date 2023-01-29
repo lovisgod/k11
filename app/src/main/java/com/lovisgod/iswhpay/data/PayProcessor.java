@@ -13,8 +13,6 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.horizonpay.smartpossdk.aidl.cardreader.IAidlCardReader;
 import com.horizonpay.smartpossdk.aidl.emv.AidlCheckCardListener;
 import com.horizonpay.smartpossdk.aidl.emv.AidlEmvStartListener;
@@ -30,7 +28,6 @@ import com.horizonpay.smartpossdk.aidl.pinpad.IAidlPinpad;
 import com.horizonpay.smartpossdk.data.EmvConstant;
 import com.horizonpay.smartpossdk.data.PinpadConst;
 import com.horizonpay.utils.ConvertUtils;
-import com.isw.iswkozen.core.data.utilsData.KeysUtils;
 import com.isw.pinencrypter.Converter;
 import com.lovisgod.iswhpay.utils.AppLog;
 import com.lovisgod.iswhpay.utils.Constants;
@@ -38,6 +35,7 @@ import com.lovisgod.iswhpay.utils.DeviceHelper;
 import com.lovisgod.iswhpay.utils.DeviceUtils;
 import com.lovisgod.iswhpay.utils.EmvUtil;
 import com.lovisgod.iswhpay.utils.HexUtil;
+import com.lovisgod.iswhpay.utils.KeysUtilx;
 import com.lovisgod.iswhpay.utils.TlvData;
 import com.lovisgod.iswhpay.utils.TlvDataList;
 import com.lovisgod.iswhpay.utils.TripleDES;
@@ -49,7 +47,6 @@ import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntity;
 import com.lovisgod.iswhpay.utils.models.pay.TransactionResultCode;
 import com.pixplicity.easyprefs.library.Prefs;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -669,7 +666,7 @@ public class PayProcessor {
                     System.out.println("info::: ksndata:::::" + ksnString);
                     try {
                         String pin = TripleDES.decrypt(sPAN, HexUtil.bytesToHexString(data), "D0FB24EA73F599C1D0FB24EA73F599C1");
-                        String pinBlock = Converter.INSTANCE.GetPinBlock(KeysUtils.INSTANCE.getIpekKsn(false).getIpek(), ksnString, pin, sPAN);
+                        String pinBlock = Converter.INSTANCE.GetPinBlock(KeysUtilx.INSTANCE.getIpekKsn(false).getIpek(), ksnString, pin, sPAN);
                         DeviceUtils.INSTANCE.showText("info::::::: " + pinBlock);
                         creditCard.setPIN(pinBlock);
                         creditCard.setKsnData(ksnString);

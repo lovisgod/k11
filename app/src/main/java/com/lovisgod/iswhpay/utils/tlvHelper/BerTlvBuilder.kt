@@ -1,4 +1,3 @@
-package com.isw.iswkozen.core.utilities
 
 import kotlin.jvm.JvmOverloads
 import android.annotation.SuppressLint
