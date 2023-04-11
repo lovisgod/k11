@@ -37,6 +37,7 @@ public class AidsUtil {
         capkEntityList.addAll(generateJcbLiveCapks());
         capkEntityList.addAll(generateCupTestCapks());
         capkEntityList.addAll(generateVerveProductionCapks());
+        capkEntityList.addAll(generateAfrigoProductionCapks());
         return capkEntityList;
     }
 
@@ -244,6 +245,87 @@ public class AidsUtil {
                 .threshold(100)
                 .build();
         aidEntityList.add(appVERVE2);
+
+        // AFRIGO
+        AidEntity appAfriGo = new AidEntity.Builder()
+                .AID("A000000891010101")
+                .selFlag(0)
+                .appVersion("0001")
+                .DDOL("9F3704")
+                .tacDefault("BCF8049800")
+                .tacOnline("BCF8049800")
+                .tacDenial("0000008000")
+                .rdCtlsFloorLimit(0)
+                .rdCtlsCvmLimit(0)
+                .rdCtlsTransLimit(10000)
+                .rdVisaTransLimit(10000)
+                .floorLimit(10000)
+                .onlinePinCap(true)
+                .maxTargetPer(80)
+                .targetPer(80)
+                .threshold(100)
+                .build();
+        aidEntityList.add(appAfriGo);
+
+        AidEntity appAfrigo1 = new AidEntity.Builder()
+                .AID("A000000891010102")
+                .selFlag(0)
+                .appVersion("0001")
+                .DDOL("9F3704")
+                .tacDefault("fc50aca000")
+                .tacOnline("f850acf800")
+                .tacDenial("0400000000")
+                .rdCtlsFloorLimit(0)
+                .rdCtlsCvmLimit(0)
+                .rdCtlsTransLimit(10000)
+                .rdVisaTransLimit(10000)
+                .floorLimit(10000)
+                .onlinePinCap(true)
+                .maxTargetPer(80)
+                .targetPer(80)
+                .threshold(100)
+                .build();
+        aidEntityList.add(appAfrigo1);
+
+        AidEntity appAfrigo3 = new AidEntity.Builder()
+                .AID("A000000891010103")
+                .selFlag(0)
+                .appVersion("0001")
+                .DDOL("9F3704")
+                .tacDefault("BCF8049800")
+                .tacOnline("BCF8049800")
+                .tacDenial("0000008000")
+                .rdCtlsFloorLimit(0)
+                .rdCtlsCvmLimit(0)
+                .rdCtlsTransLimit(10000)
+                .rdVisaTransLimit(10000)
+                .floorLimit(10000)
+                .onlinePinCap(true)
+                .maxTargetPer(80)
+                .targetPer(80)
+                .threshold(100)
+                .build();
+        aidEntityList.add(appAfrigo3);
+
+        AidEntity appAfrigo4 = new AidEntity.Builder()
+                .AID("A000000891010104")
+                .selFlag(0)
+                .appVersion("0001")
+                .DDOL("9F3704")
+                .tacDefault("fc50aca000")
+                .tacOnline("f850acf800")
+                .tacDenial("0400000000")
+                .rdCtlsFloorLimit(0)
+                .rdCtlsCvmLimit(0)
+                .rdCtlsTransLimit(10000)
+                .rdVisaTransLimit(10000)
+                .floorLimit(10000)
+                .onlinePinCap(true)
+                .maxTargetPer(80)
+                .targetPer(80)
+                .threshold(100)
+                .build();
+        aidEntityList.add(appAfrigo4);
 
         return aidEntityList;
 
@@ -768,6 +850,25 @@ public class AidsUtil {
                 .checkSum("676822D335AB0D2C3848418CB546DF7B6A6C32C0")
                 .build();
         capkEntityList.add(capkVerve0x03);
+
+        return capkEntityList;
+    }
+
+    // AFRIGO CAPK
+    private static List<CapkEntity> generateAfrigoProductionCapks() {
+        List<CapkEntity> capkEntityList =new ArrayList<>();
+        // MasterCard Production Capk
+        CapkEntity capkAfrigo0x00 = CapkEntity.builder()
+                .RID("A000000891")
+                .capkIndex(0x90)
+                .arithInd(0x01)
+                .hashInd(0x01)
+                .expDate("171231")
+                .modul("E2C471DA374BF87116AEFDEF9A8101A454E4BFB4352380609AC2B0C163AA7A5F8366A6AFB5D138A4B5AFC2D4F10CF68F8881B299890CEAA1AF4FA3C08597903FF35E789755A10DE1CA78680219CF5A7510BB4554D3CB7F0D8694401D865CA1074AF65D3A5F31FF84E82A956005CE3A2B477FB00BCF8AD041632DC9528EF11AAE7B441D27A08F6BAE65C314C02EE8CAF3CA245DCFFBEAB6E3FDECC8855DAFADD03BB7613EEEC14CCD6EB616545E29454DA1C4E97100112DB0C5B35EEE57786F9E9CB18634E17A13CBA3D70EF41D76A1ED57BF0DCE150C530D117026289A87576737233C1E10840647CA059EC1C632A0F699F109BB4DA2BCB7")
+                .exponent("03")
+                .checkSum("D9ECCD2EA52CC41C0D16F923BD15B76042C66FA7")
+                .build();
+        capkEntityList.add(capkAfrigo0x00);
 
         return capkEntityList;
     }

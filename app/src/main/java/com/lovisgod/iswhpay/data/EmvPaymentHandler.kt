@@ -150,13 +150,20 @@ class EmvPaymentHandler {
 
         override fun confirmApplicationSelection(candidateList: List<CandidateAID>): CandidateAID? {
             // Implement this for the sake of certification
-            var selectedIndex = 0
+            // handle account selection here
+             val selectedAccountType = this@EmvPaymentHandler.readCardStates?.onSelectAccountType()
+            return if (selectedAccountType != null) {
+                var selectedIndex = 0
 //            try {
 //                selectedIndex = AppSelectDialog(this@EmvActivity, candidateList).call()
 //            } catch (e: Exception) {
 //                e.printStackTrace()
 //            }
-            return candidateList[selectedIndex]
+                 candidateList[selectedIndex]
+            } else {
+                candidateList[0]
+            }
+
         }
 
         override fun onPerformOnlineProcessing(creditCard: CreditCard, isOnlinePin: Boolean): OnlineRespEntity? {

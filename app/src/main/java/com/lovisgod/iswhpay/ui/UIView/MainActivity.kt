@@ -17,6 +17,7 @@ import com.lovisgod.iswhpay.utils.models.TerminalInfo
 import com.lovisgod.iswhpay.utils.models.iccData.RequestIccData
 import com.lovisgod.iswhpay.utils.models.pay.OnlineRespEntity
 import com.lovisgod.iswhpay.utils.models.pay.TransactionResultCode
+import com.lovisgod.iswhpay.utils.networkHandler.models.AccountType
 import kotlinx.coroutines.*
 import kotlin.properties.Delegates
 
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
     lateinit var printBtn: Button
     lateinit var xxxxxx : ScrollView
     lateinit var useCases: AllUseCases
+    lateinit var accountType: AccountType
     var amount by Delegates.notNull<Int>()
      var respEntity: OnlineRespEntity = OnlineRespEntity().apply {
          respCode = "12"
@@ -175,6 +177,11 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
         }
         var datax  = data as RequestIccData
         println("code :::: ${code.name} :::::: data :::: ${data.TRANSACTION_AMOUNT}:::: ${data.CARD_HOLDER_NAME}:::: ${data.EMV_CARD_PIN_DATA.CardPinBlock}")
+    }
+
+    override fun onSelectAccountType(): AccountType {
+        accountType = AccountType.Default
+        return accountType
     }
 
     override fun onSuccess(code: Int) {
