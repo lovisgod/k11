@@ -180,6 +180,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
     }
 
     override fun onSelectAccountType(): AccountType {
+        println("this is called for select account type")
         accountType = AccountType.Default
         return accountType
     }

@@ -101,68 +101,116 @@ class EmvPaymentHandler {
         }
 
         override fun onCardDetected(cardReadMode: CardReadMode, creditCard: CreditCard) {
-            when (cardReadMode) {
-                CardReadMode.SWIPE -> {
-                    val builder = StringBuilder()
-                    builder.append(
-                        """
+            println("Comfirm application s elected called")
+            // Implement this for the sake of certification
+            // handle account selection here
+            val selectedAccountType = this@EmvPaymentHandler.readCardStates?.onSelectAccountType()
+             if (selectedAccountType != null) {
+                 when (cardReadMode) {
+                     CardReadMode.SWIPE -> {
+                         val builder = StringBuilder()
+                         builder.append(
+                             """
                         -----------
                         Card: ${creditCard.getCardNumber()}
                         """.trimIndent()
-                    )
-                    builder.append(
-                        """
+                         )
+                         builder.append(
+                             """
                         
                         Expiry Date: ${creditCard.getExpireDate()}
                         """.trimIndent()
-                    )
-                    builder.append(
-                        """
+                         )
+                         builder.append(
+                             """
                         
                         CardholderName: ${creditCard.getHolderName()}
                         """.trimIndent()
-                    )
-                    builder.append(
-                        """
+                         )
+                         builder.append(
+                             """
                         
                         CardSequenceNumber: ${creditCard.getCardSequenceNumber()}
                         """.trimIndent()
-                    )
-                    builder.append(
-                        """
+                         )
+                         builder.append(
+                             """
                         
                         Track1: ${creditCard.getMagData().getTrack1()}
                         """.trimIndent()
-                    )
-                    builder.append(
-                        """
+                         )
+                         builder.append(
+                             """
                         
                         Track2: ${creditCard.getMagData().getTrack2()}
                         """.trimIndent()
-                    )
-                    builder.append("-------------------\n")
-                    payProcessor!!.magCardInputPIN(creditCard.getCardNumber())
-                }
-                CardReadMode.CONTACT, CardReadMode.CONTACTLESS -> {}
-                else -> {}
+                         )
+                         builder.append("-------------------\n")
+                         payProcessor!!.magCardInputPIN(creditCard.getCardNumber())
+                     }
+                     CardReadMode.CONTACT, CardReadMode.CONTACTLESS -> {}
+                     else -> {}
+                 }
+            } else {
+                 when (cardReadMode) {
+                     CardReadMode.SWIPE -> {
+                         val builder = StringBuilder()
+                         builder.append(
+                             """
+                        -----------
+                        Card: ${creditCard.getCardNumber()}
+                        """.trimIndent()
+                         )
+                         builder.append(
+                             """
+                        
+                        Expiry Date: ${creditCard.getExpireDate()}
+                        """.trimIndent()
+                         )
+                         builder.append(
+                             """
+                        
+                        CardholderName: ${creditCard.getHolderName()}
+                        """.trimIndent()
+                         )
+                         builder.append(
+                             """
+                        
+                        CardSequenceNumber: ${creditCard.getCardSequenceNumber()}
+                        """.trimIndent()
+                         )
+                         builder.append(
+                             """
+                        
+                        Track1: ${creditCard.getMagData().getTrack1()}
+                        """.trimIndent()
+                         )
+                         builder.append(
+                             """
+                        
+                        Track2: ${creditCard.getMagData().getTrack2()}
+                        """.trimIndent()
+                         )
+                         builder.append("-------------------\n")
+                         payProcessor!!.magCardInputPIN(creditCard.getCardNumber())
+                     }
+                     CardReadMode.CONTACT, CardReadMode.CONTACTLESS -> {}
+                     else -> {}
+                 }
             }
+
         }
 
         override fun confirmApplicationSelection(candidateList: List<CandidateAID>): CandidateAID? {
-            // Implement this for the sake of certification
-            // handle account selection here
-             val selectedAccountType = this@EmvPaymentHandler.readCardStates?.onSelectAccountType()
-            return if (selectedAccountType != null) {
+
+
                 var selectedIndex = 0
 //            try {
 //                selectedIndex = AppSelectDialog(this@EmvActivity, candidateList).call()
 //            } catch (e: Exception) {
 //                e.printStackTrace()
 //            }
-                 candidateList[selectedIndex]
-            } else {
-                candidateList[0]
-            }
+                return  candidateList[selectedIndex]
 
         }
 
