@@ -23,7 +23,8 @@ class HorizonAppContainer {
              setTerminalConfigUseCase = SetTerminalConfigUseCase(repository),
              setPinKeyUseCase = SetPinKeyUseCase(repository),
              emvPayUseCase = EmvPayUseCase(repository),
-             printBitMapUseCase = PrintBitMapUseCase(repository)
+             printBitMapUseCase = PrintBitMapUseCase(repository),
+             continueTransactionUseCase = EmvContinueTransactionUseCase(repository)
          )
     }
 

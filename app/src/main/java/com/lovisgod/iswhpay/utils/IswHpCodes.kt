@@ -6,4 +6,5 @@ object IswHpCodes {
     const val NOT_SUPPORTED = 50
     const val SUCCESS = 0
     const val FAILURE = 1
+    const val PIN_LOAD_ERROR = 999
 }

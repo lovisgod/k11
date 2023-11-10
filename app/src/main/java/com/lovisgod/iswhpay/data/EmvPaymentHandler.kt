@@ -291,8 +291,8 @@ class EmvPaymentHandler {
 //            stopEmvProcess()
         }
 
-        override fun cardRead(cardtype: String?): Boolean {
-            this@EmvPaymentHandler.readCardStates?.onCardRead(cardtype.toString())
+        override fun cardRead(cardtype: String?, cardNo: String): Boolean {
+            this@EmvPaymentHandler.readCardStates?.onCardRead(cardtype.toString(), cardNo)
             return true
         }
 

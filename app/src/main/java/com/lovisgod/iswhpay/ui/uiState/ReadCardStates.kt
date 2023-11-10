@@ -15,7 +15,7 @@ interface ReadCardStates {
     fun onEmvProcessed(data: Any?, code: TransactionResultCode)
     fun onSelectAccountType(): AccountType
 
-    fun onCardRead(cardType: String) {
+    fun onCardRead(cardType: String, cardNo: String) {
         println("$cardType card detected")
     }
 }

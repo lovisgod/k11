@@ -115,6 +115,24 @@ class EmvDataKeyManager {
     }
 
     fun setPinKey(isDukpt: Boolean, key: String = "", ksn: String = ""): Int {
-        if (isDukpt) return  setDukpt(key, ksn) else return IswHpCodes.NOT_SUPPORTED // implement pin key later
+        if (isDukpt){
+            return  setDukpt(key, ksn)
+        } else {
+          var result = setMasterKey(key)
+          if (result == 0) {
+              result = setPinWorkingKey(key, 0)
+          }
+          return result
+        } // implement pin key later
+    }
+
+    fun setMasterKey(key: String): Int {
+        PinPad3DesHandler.inititial()
+        return PinPad3DesHandler.loadMasterKey(key)
+    }
+
+    fun setPinWorkingKey(key: String, keyIndex: Int): Int {
+        PinPad3DesHandler.inititial()
+        return PinPad3DesHandler.loadPinkey(key)
     }
 }

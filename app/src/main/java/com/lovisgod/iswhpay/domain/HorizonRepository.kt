@@ -6,6 +6,7 @@ import com.lovisgod.iswhpay.data.DataSource
 import com.lovisgod.iswhpay.ui.uiState.PrintingState
 import com.lovisgod.iswhpay.ui.uiState.ReadCardStates
 import com.lovisgod.iswhpay.utils.models.TerminalInfo
+import java.util.concurrent.locks.Condition
 
 class HorizonRepository(val dataSource: DataSource) {
     suspend fun downloadAid() = dataSource.downloadAid()
@@ -14,5 +15,7 @@ class HorizonRepository(val dataSource: DataSource) {
     suspend fun setPinKey(
         isDukpt: Boolean = true, key: String = "", ksn: String = "") = dataSource.setPinKey(isDukpt, key, ksn)
     suspend fun pay(amount: Long, readCardStates: ReadCardStates, context: Context) = dataSource.pay(amount, readCardStates, context)
+
+    suspend fun continueTransaction(condition: Boolean) = dataSource.continueTransaction(condition)
     suspend fun printBitMap(bitmap: Bitmap, printingState: PrintingState) = dataSource.printBitMap(bitmap, printingState)
 }

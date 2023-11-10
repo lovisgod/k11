@@ -65,7 +65,7 @@ public class PayProcessor {
 
         void onCompleted(TransactionResultCode result, CreditCard creditCard);
 
-        boolean cardRead(String cardtype);
+        boolean cardRead(String cardtype, String cardNo);
 
         void onInputPin();
 
@@ -230,7 +230,7 @@ public class PayProcessor {
             System.out.println("info::::: confirm card no called");
             AppLog.d(LOG_TAG, "onConfirmCardNo: " + cardNo);
             AppLog.i(LOG_TAG, "time = " + (System.currentTimeMillis() - startTick) + "ms");
-            mListener.cardRead(CardUtil.getCardTypFromAid(CardManipulatorUtil.INSTANCE.getCardType(cardNo)));
+            mListener.cardRead(CardUtil.getCardTypFromAid(CardManipulatorUtil.INSTANCE.getCardType(cardNo)), cardNo);
             int i = 0;
             while (i < 120) {
                 if (continueTransaction) {

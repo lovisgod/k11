@@ -14,6 +14,7 @@ import com.horizonpay.utils.FormatUtils;
 import com.lovisgod.iswhpay.utils.DeviceHelper;
 import com.lovisgod.iswhpay.utils.DeviceUtils;
 import com.lovisgod.iswhpay.utils.HexUtil;
+import com.lovisgod.iswhpay.utils.IswHpCodes;
 import com.lovisgod.iswhpay.utils.TripleDES;
 
 /***************************************************************************************************
@@ -50,10 +51,10 @@ public class PinPad3DesHandler {
 
 
 
-    private void loadClearMasterKey() {
+    static void loadClearMasterKey(String key) {
         try {
             //MK: 4B9F30D51BCB6A594B9F30D51BCB6A59
-            byte[] masterKey = HexUtil.hexStringToByte("31313131313131313131313131313131");
+            byte[] masterKey = HexUtil.hexStringToByte(key);
             boolean result = innerpinpad.injectClearTMK(MASTER_KEY_INDEX, masterKey, new byte[4]);
             if (result) {
                 System.out.println( "loadClearMasterKey [31313131313131313131313131313131] success");
@@ -66,26 +67,29 @@ public class PinPad3DesHandler {
         }
     }
 
-    private void loadMasterKey() {
+    static int loadMasterKey(String key) {
+        int keyReturn;
         try {
-            // KEK: FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            // MK:  31313131313131313131313131313131
-            byte[] masterKey = HexUtil.hexStringToByte("E168332B6C49D3C7E168332B6C49D3C7");
+            byte[] masterKey = HexUtil.hexStringToByte(key);
             byte[] kcv = HexUtil.hexStringToByte("40826A58");
             boolean result = innerpinpad.injectSecureTMK(KEK_KEY_INDEX, MASTER_KEY_INDEX, masterKey, kcv);
             if (result) {
-                DeviceUtils.INSTANCE.showText("injectSecureTMK [31313131313131313131313131313131] success");
+                keyReturn = 0;
+                DeviceUtils.INSTANCE.showText("injectSecureTMK success");
             } else {
-                DeviceUtils.INSTANCE.showText("injectSecureTMK [31313131313131313131313131313131] failed");
+                keyReturn = IswHpCodes.PIN_LOAD_ERROR;
+                DeviceUtils.INSTANCE.showText("injectSecureTMK failed");
             }
             getRandomNumber(2);
+            return keyReturn;
         } catch (RemoteException e) {
             Log.d(TAG, e.getMessage());
+            return IswHpCodes.PIN_LOAD_ERROR;
         }
 
     }
 
-    public String getRandomNumber(int len) {
+    public static String getRandomNumber(int len) {
         if (len > 16) {
             return null;
         }
@@ -126,6 +130,26 @@ public class PinPad3DesHandler {
         Log.d(TAG, "getRandomNumber: " + stringBuffer.toString());
 
         return stringBuffer.toString().substring(0,len);
+    }
+
+    static public int loadPinkey(String key) {
+        try {
+            //Encrypted PIN key
+            byte[] pinKey = HexUtil.hexStringToByte(key);
+//            byte[] kcv = HexUtil.hexStringToByte("D2DB51F1");
+            byte[] kcv = HexUtil.hexStringToByte("00000000");
+            boolean result = innerpinpad.injectWorkKey(WORK_KEY_INDEX, PinpadConst.PinPadKeyType.TPINK, pinKey, kcv);
+            if (result) {
+                DeviceUtils.INSTANCE.showText("load pin key success");
+                return 0;
+            } else {
+                DeviceUtils.INSTANCE.showText("load pin key failed");
+                return IswHpCodes.PIN_LOAD_ERROR;
+            }
+        } catch (RemoteException e) {
+            Log.d(TAG, e.getMessage());
+            return IswHpCodes.PIN_LOAD_ERROR;
+        }
     }
 
 
