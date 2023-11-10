@@ -12,13 +12,13 @@ import org.simpleframework.xml.Root
 data class TerminalInfo(
 
     @field:Element(name = "terminalCode", required = false)
-    var terminalCode: String = "2ISW0001",
+    var terminalCode: String = "",
 
     @field:Element(name = "cardAcceptorId", required = false)
-    var cardAcceptorId: String = "2ISW1234567TEST",
+    var cardAcceptorId: String = "",
 
     @field:Element(name = "merchantId", required = false)
-    var merchantId: String = "2ISW1234567TEST",
+    var merchantId: String = "",
 
     @field:Element(name = "merchantName", required = false)
     var merchantName: String = "Interswitch ng sample terminal",
@@ -45,10 +45,10 @@ data class TerminalInfo(
     var merchantCity: String = "Lagos",
 
     @field:Element(name = "qtbMerchantCode", required = false)
-    var qtbMerchantCode: String? = "MX1065",
+    var qtbMerchantCode: String? = "",
 
     @field:Element(name = "qtbMerchantAlias", required = false)
-    var qtbMerchantAlias: String? = "002208",
+    var qtbMerchantAlias: String? = "",
 
     @field:Element(name = "cardAcceptorNameLocation", required = false)
     var cardAcceptorNameLocation: String = "",

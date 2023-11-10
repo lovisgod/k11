@@ -30,6 +30,8 @@ import com.horizonpay.smartpossdk.data.PinpadConst;
 import com.horizonpay.utils.ConvertUtils;
 import com.isw.pinencrypter.Converter;
 import com.lovisgod.iswhpay.utils.AppLog;
+import com.lovisgod.iswhpay.utils.CardManipulatorUtil;
+import com.lovisgod.iswhpay.utils.CardUtil;
 import com.lovisgod.iswhpay.utils.Constants;
 import com.lovisgod.iswhpay.utils.DeviceHelper;
 import com.lovisgod.iswhpay.utils.DeviceUtils;
@@ -63,6 +65,8 @@ public class PayProcessor {
 
         void onCompleted(TransactionResultCode result, CreditCard creditCard);
 
+        boolean cardRead(String cardtype);
+
         void onInputPin();
 
     }
@@ -81,6 +85,10 @@ public class PayProcessor {
     private final String LOG_TAG = PayProcessor.class.getSimpleName();
     private Context mContext;
     public CreditCard creditCard;
+
+    private String aidSelected;
+
+    private boolean continueTransaction;
 
     public PayProcessor(Context context) {
         mContext = context;
@@ -103,6 +111,10 @@ public class PayProcessor {
             e.printStackTrace();
         }
 
+    }
+
+    public void setContinueTransaction(boolean condition) {
+        this.continueTransaction = condition;
     }
 
     public void pay(long amount, PayProcessorListener listener) {
@@ -218,7 +230,24 @@ public class PayProcessor {
             System.out.println("info::::: confirm card no called");
             AppLog.d(LOG_TAG, "onConfirmCardNo: " + cardNo);
             AppLog.i(LOG_TAG, "time = " + (System.currentTimeMillis() - startTick) + "ms");
-            mEmvL2.confirmCardNoResp(true);
+            mListener.cardRead(CardUtil.getCardTypFromAid(CardManipulatorUtil.INSTANCE.getCardType(cardNo)));
+            int i = 0;
+            while (i < 120) {
+                if (continueTransaction) {
+                    mEmvL2.confirmCardNoResp(true);
+                    break;
+                } else {
+                    System.out.println("account type not yet selected");
+                }
+                try {
+                    // Sleep for 2 seconds (2000 milliseconds)
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    // Handle any exceptions that may occur
+                    e.printStackTrace();
+                }
+                i++;
+            }
         }
 
 

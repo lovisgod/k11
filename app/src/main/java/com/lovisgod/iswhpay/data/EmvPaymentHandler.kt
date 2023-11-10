@@ -46,6 +46,10 @@ class EmvPaymentHandler {
         payProcessor?.pay(amount, processorListener)
     }
 
+    fun continueTransaction(condition: Boolean) {
+        payProcessor?.setContinueTransaction(condition)
+    }
+
     private fun setPrintLevel(level: Int) {
         try {
             printer!!.printGray = level
@@ -285,6 +289,11 @@ class EmvPaymentHandler {
             }
               println(EmvUtil.showEmvTransResult().toString())
 //            stopEmvProcess()
+        }
+
+        override fun cardRead(cardtype: String?): Boolean {
+            this@EmvPaymentHandler.readCardStates?.onCardRead(cardtype.toString())
+            return true
         }
 
         override fun onInputPin() {

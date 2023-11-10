@@ -14,4 +14,8 @@ interface ReadCardStates {
     fun onEmvProcessing(message: String = "Please wait while we read card")
     fun onEmvProcessed(data: Any?, code: TransactionResultCode)
     fun onSelectAccountType(): AccountType
+
+    fun onCardRead(cardType: String) {
+        println("$cardType card detected")
+    }
 }
