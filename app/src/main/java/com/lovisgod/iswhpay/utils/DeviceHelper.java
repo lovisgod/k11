@@ -81,6 +81,7 @@ public class DeviceHelper {
     }
 
     public static IAidlDevice getDevice() {
+        System.out.println("application is null   " + application == null);
         return application.getDevice();
     }
 

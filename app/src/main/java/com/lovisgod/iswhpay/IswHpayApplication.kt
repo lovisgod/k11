@@ -52,6 +52,9 @@ object IswHpayApplication {
         println("this is called third")
         PosAidlDeviceServiceUtil.connectDeviceService(context, object : DeviceServiceListen {
             override fun onConnected(device: IAidlDevice) {
+                println("device is connected")
+                println("this is application :::: $this@IswHpayApplication")
+                println(device)
                 this@IswHpayApplication.device = device
                 try {
                     DeviceHelper.reset()
@@ -64,9 +67,15 @@ object IswHpayApplication {
                 }
             }
 
-            override fun error(errorcode: Int) {}
-            override fun onDisconnected() {}
-            override fun onUnCompatibleDevice() {}
+            override fun error(errorcode: Int) {
+                println("Error happened connecting device")
+            }
+            override fun onDisconnected() {
+                println("Device disconnected")
+            }
+            override fun onUnCompatibleDevice() {
+                println("Error un-compatible device")
+            }
         })
     }
 
