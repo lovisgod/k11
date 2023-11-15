@@ -59,6 +59,16 @@ class DataSource(val emvDataKeyManager: EmvDataKeyManager, val emvPaymentHandler
         }
     }
 
+    suspend fun setIsKimono(isKimono: Boolean){
+        try {
+            emvPaymentHandler.setIsKimono(isKimono)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            IswHpCodes.GENERAL_EMV_EXCEPTION
+        }
+    }
+
+
     suspend fun continueTransaction(condition: Boolean) {
         try {
             emvPaymentHandler.continueTransaction(condition)

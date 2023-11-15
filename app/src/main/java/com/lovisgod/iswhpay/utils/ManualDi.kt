@@ -24,7 +24,8 @@ class HorizonAppContainer {
              setPinKeyUseCase = SetPinKeyUseCase(repository),
              emvPayUseCase = EmvPayUseCase(repository),
              printBitMapUseCase = PrintBitMapUseCase(repository),
-             continueTransactionUseCase = EmvContinueTransactionUseCase(repository)
+             continueTransactionUseCase = EmvContinueTransactionUseCase(repository),
+             emvSetIsKimonoUseCase = EmvSetIsKimonoUseCase(repository)
          )
     }
 

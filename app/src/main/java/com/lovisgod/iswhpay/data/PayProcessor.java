@@ -90,6 +90,8 @@ public class PayProcessor {
 
     private boolean continueTransaction;
 
+    private boolean isKimono;
+
     public PayProcessor(Context context) {
         mContext = context;
     }
@@ -111,6 +113,10 @@ public class PayProcessor {
             e.printStackTrace();
         }
 
+    }
+
+    public void setIsKimono(Boolean isKimono) {
+        this.isKimono = isKimono;
     }
 
     public void setContinueTransaction(boolean condition) {
@@ -693,14 +699,19 @@ public class PayProcessor {
                     mEmvL2.requestPinResp(data, noPin);
                     System.out.println("info:::: pinblock ::: "+ HexUtil.bytesToHexString(data));
                     System.out.println("info::: ksndata:::::" + ksnString);
-                    try {
-                        String pin = TripleDES.decrypt(sPAN, HexUtil.bytesToHexString(data), "D0FB24EA73F599C1D0FB24EA73F599C1");
-                        String pinBlock = Converter.INSTANCE.GetPinBlock(KeysUtilx.INSTANCE.getIpekKsn(false).getIpek(), ksnString, pin, sPAN);
-                        DeviceUtils.INSTANCE.showText("info::::::: " + pinBlock);
-                        creditCard.setPIN(pinBlock);
-                        creditCard.setKsnData(ksnString);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    creditCard.setPIN(HexUtil.bytesToHexString(data));
+                    creditCard.setKsnData("");
+
+                    if (isKimono) {
+                        try {
+                            String pin = TripleDES.decrypt(sPAN, HexUtil.bytesToHexString(data), "D0FB24EA73F599C1D0FB24EA73F599C1");
+                            String pinBlock = Converter.INSTANCE.GetPinBlock(KeysUtilx.INSTANCE.getIpekKsn(false).getIpek(), ksnString, pin, sPAN);
+                            DeviceUtils.INSTANCE.showText("info::::::: " + pinBlock);
+                            creditCard.setPIN(pinBlock);
+                            creditCard.setKsnData(ksnString);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 

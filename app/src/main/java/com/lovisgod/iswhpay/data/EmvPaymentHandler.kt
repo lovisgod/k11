@@ -40,6 +40,10 @@ class EmvPaymentHandler {
 //        }
     }
 
+    fun setIsKimono(isKimono: Boolean) {
+        payProcessor?.setIsKimono(isKimono)
+    }
+
     fun pay (amount: Long, readCardStates: ReadCardStates, context: Context) {
         payProcessor = PayProcessor(context)
         this.readCardStates = readCardStates

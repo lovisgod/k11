@@ -17,5 +17,7 @@ class HorizonRepository(val dataSource: DataSource) {
     suspend fun pay(amount: Long, readCardStates: ReadCardStates, context: Context) = dataSource.pay(amount, readCardStates, context)
 
     suspend fun continueTransaction(condition: Boolean) = dataSource.continueTransaction(condition)
+
+    suspend fun setIsKimono(isKimono: Boolean) = dataSource.setIsKimono(isKimono)
     suspend fun printBitMap(bitmap: Bitmap, printingState: PrintingState) = dataSource.printBitMap(bitmap, printingState)
 }

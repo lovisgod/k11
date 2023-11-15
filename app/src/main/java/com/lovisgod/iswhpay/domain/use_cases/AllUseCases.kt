@@ -7,5 +7,6 @@ data class AllUseCases(
    val setPinKeyUseCase: SetPinKeyUseCase,
    val emvPayUseCase: EmvPayUseCase,
    val printBitMapUseCase: PrintBitMapUseCase,
-   val continueTransactionUseCase: EmvContinueTransactionUseCase
+   val continueTransactionUseCase: EmvContinueTransactionUseCase,
+   val emvSetIsKimonoUseCase: EmvSetIsKimonoUseCase
 )
