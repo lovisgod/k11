@@ -57,9 +57,9 @@ public class PinPad3DesHandler {
             byte[] masterKey = HexUtil.hexStringToByte(key);
             boolean result = innerpinpad.injectClearTMK(MASTER_KEY_INDEX, masterKey, new byte[4]);
             if (result) {
-                System.out.println( "loadClearMasterKey [31313131313131313131313131313131] success");
+                System.out.println( "loadClearMasterKey  success");
             } else {
-                System.out.println("loadClearMasterKey [31313131313131313131313131313131] failed");
+                System.out.println("loadClearMasterKey  failed");
             }
 
         } catch (RemoteException e) {

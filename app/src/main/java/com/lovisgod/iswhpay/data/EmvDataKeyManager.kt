@@ -127,8 +127,14 @@ class EmvDataKeyManager {
     }
 
     fun setMasterKey(key: String): Int {
-        PinPad3DesHandler.inititial()
-        return PinPad3DesHandler.loadMasterKey(key)
+      try {
+          PinPad3DesHandler.inititial()
+          return PinPad3DesHandler.loadMasterKey(key)
+//          return 0
+      } catch (e: Exception) {
+          e.printStackTrace()
+          return IswHpCodes.PIN_LOAD_ERROR
+      }
     }
 
     fun setPinWorkingKey(key: String, keyIndex: Int): Int {

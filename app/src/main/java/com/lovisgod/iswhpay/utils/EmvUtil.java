@@ -93,6 +93,11 @@ public class EmvUtil {
             "9F6B"
     };
 
+
+    public static final String[] required_tags = new String[]{
+      "9F26", "9F27", "9F10", "9F37", "9F36", "95", "9A", "9C", "9F02", "5F2A", "82", "9F1A", "9F34", "9F33", "9F35", "9F1E", "84", "9F09", "9F03", "5F34", "9F39", "5F20", "8E", "80", "9F6E"
+    };
+
     public static byte[] getExampleARPCData() {
         //TODO Data returned by background server ,should be contain 91 tag, if you need to test ARPC
         // such as : 91 0A F9 8D 4B 51 B4 76 34 74 30 30 ,   if need to set 71 and 72  ,Please add this String
@@ -214,7 +219,7 @@ public class EmvUtil {
     }
 
     public static String getTlvStringData() throws RemoteException {
-        return DeviceHelper.getEmvHandler().getTlvByTags(EmvUtil.tags);
+        return DeviceHelper.getEmvHandler().getTlvByTags(EmvUtil.required_tags);
     }
 
     public static StringBuilder showEmvTransResult() {
@@ -222,7 +227,7 @@ public class EmvUtil {
         TlvDataList tlvDataList = null;
         String tlv = null;
         try {
-            tlv = DeviceHelper.getEmvHandler().getTlvByTags(EmvUtil.tags);
+            tlv = DeviceHelper.getEmvHandler().getTlvByTags(EmvUtil.required_tags);
             tlvDataList = TlvDataList.fromBinary(tlv);
             AppLog.d(TAG,"ICC Data: " + "\n" + tlv);
             builder.append("---------------------------------------------------\n");
@@ -259,7 +264,7 @@ public class EmvUtil {
 
         builder.append("Card Track 2: " + EmvUtil.readTrack2() + "\n");
         builder.append("----------------------------\n");
-        for (String tag : EmvUtil.tags) {
+        for (String tag : EmvUtil.required_tags) {
             builder.append(tag + "=" + tlvDataList.getTLV(tag) + "\n");
         }
         builder.append("---------------------------------------------------\n");
@@ -273,7 +278,7 @@ public class EmvUtil {
         TlvDataList tlvDataList = null;
         String tlv = null;
         try {
-            tlv = DeviceHelper.getEmvHandler().getTlvByTags(EmvUtil.tags);
+            tlv = DeviceHelper.getEmvHandler().getTlvByTags(EmvUtil.required_tags);
             tlvDataList = TlvDataList.fromBinary(tlv);
             AppLog.d(TAG, "ICC Data: " + "\n" + tlv);
             if (tlvDataList.getTLV(EmvTags.EMV_TAG_IC_CHNAME) != null) {
