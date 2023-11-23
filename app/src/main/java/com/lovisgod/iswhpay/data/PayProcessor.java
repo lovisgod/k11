@@ -116,6 +116,7 @@ public class PayProcessor {
     }
 
     public void setIsKimono(Boolean isKimono) {
+        DeviceUtils.INSTANCE.showText("info::::::: set iskimono " + isKimono);
         this.isKimono = isKimono;
     }
 
@@ -702,13 +703,18 @@ public class PayProcessor {
                     creditCard.setPIN(HexUtil.bytesToHexString(data));
                     creditCard.setKsnData("");
 
+                    DeviceUtils.INSTANCE.showText("info:::::::got here for kimonoxxx " + isKimono);
+
                     if (isKimono) {
+                        DeviceUtils.INSTANCE.showText("info:::::::got here for kimono " + isKimono);
                         try {
                             String pin = TripleDES.decrypt(sPAN, HexUtil.bytesToHexString(data), "D0FB24EA73F599C1D0FB24EA73F599C1");
                             String pinBlock = Converter.INSTANCE.GetPinBlock(KeysUtilx.INSTANCE.getIpekKsn(false).getIpek(), ksnString, pin, sPAN);
                             DeviceUtils.INSTANCE.showText("info::::::: " + pinBlock);
                             creditCard.setPIN(pinBlock);
                             creditCard.setKsnData(ksnString);
+                            System.out.println("info:::: pinblock kimono ::: "+ pinBlock);
+                            System.out.println("info::: ksndata kimono:::::" + ksnString);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
