@@ -118,7 +118,7 @@ public class PayProcessor {
     public void setIsKimono(Boolean isKimono) {
         DeviceUtils.INSTANCE.showText("info::::::: set iskimono " + isKimono);
         this.isKimono = isKimono;
-        KeysUtilx.INSTANCE.setISKIMONO(true);
+        KeysUtilx.INSTANCE.setISKIMONO(isKimono);
     }
 
     public void setContinueTransaction(boolean condition) {
