@@ -118,6 +118,7 @@ public class PayProcessor {
     public void setIsKimono(Boolean isKimono) {
         DeviceUtils.INSTANCE.showText("info::::::: set iskimono " + isKimono);
         this.isKimono = isKimono;
+        KeysUtilx.INSTANCE.setISKIMONO(true);
     }
 
     public void setContinueTransaction(boolean condition) {
@@ -703,10 +704,10 @@ public class PayProcessor {
                     creditCard.setPIN(HexUtil.bytesToHexString(data));
                     creditCard.setKsnData("");
 
-                    DeviceUtils.INSTANCE.showText("info:::::::got here for kimonoxxx " + isKimono);
+                    DeviceUtils.INSTANCE.showText("info:::::::got here for kimonoxxx " + KeysUtilx.INSTANCE.getISKIMONO());
 
-                    if (isKimono) {
-                        DeviceUtils.INSTANCE.showText("info:::::::got here for kimono " + isKimono);
+                    if (KeysUtilx.INSTANCE.getISKIMONO()) {
+                        DeviceUtils.INSTANCE.showText("info:::::::got here for kimono " + KeysUtilx.INSTANCE.getISKIMONO());
                         try {
                             String pin = TripleDES.decrypt(sPAN, HexUtil.bytesToHexString(data), "D0FB24EA73F599C1D0FB24EA73F599C1");
                             String pinBlock = Converter.INSTANCE.GetPinBlock(KeysUtilx.INSTANCE.getIpekKsn(false).getIpek(), ksnString, pin, sPAN);

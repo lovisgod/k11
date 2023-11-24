@@ -7,6 +7,8 @@ import java.nio.charset.Charset
 
 object KeysUtilx {
 
+    var ISKIMONO: Boolean = false
+
     data class IpekKsn(
         var ipek: String,
         var ksn: String
