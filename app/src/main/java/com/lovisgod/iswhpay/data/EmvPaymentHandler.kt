@@ -156,7 +156,10 @@ class EmvPaymentHandler {
                          builder.append("-------------------\n")
                          payProcessor!!.magCardInputPIN(creditCard.getCardNumber())
                      }
-                     CardReadMode.CONTACT, CardReadMode.CONTACTLESS -> {}
+                     CardReadMode.CONTACT -> {
+                         this@EmvPaymentHandler.readCardStates?.onCardDetected()
+                     }
+                     CardReadMode.CONTACTLESS -> {}
                      else -> {}
                  }
             } else {

@@ -8,6 +8,10 @@ import com.lovisgod.iswhpay.utils.networkHandler.models.AccountType
 interface ReadCardStates {
 
     fun onInsertCard()
+
+    fun onCardDetected() {
+        println("card has been detected")
+    }
     fun onRemoveCard()
     fun onPinInput()
     fun sendTransactionOnline(emvData: RequestIccData): OnlineRespEntity
@@ -16,6 +20,6 @@ interface ReadCardStates {
     fun onSelectAccountType(): AccountType
 
     fun onCardRead(cardType: String, cardNo: String) {
-        println("$cardType card detected")
+        println("$cardType card has been read")
     }
 }
