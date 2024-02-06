@@ -78,6 +78,14 @@ class DataSource(val emvDataKeyManager: EmvDataKeyManager, val emvPaymentHandler
         }
     }
 
+    suspend fun stopTransaction() {
+        try {
+            emvPaymentHandler.stopTransaction()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            IswHpCodes.GENERAL_EMV_EXCEPTION
+        }
+    }
     suspend fun printBitMap(bitmap: Bitmap, printingState: PrintingState) {
         try {
             emvPaymentHandler.handlePrinting(bitmap, printingState)

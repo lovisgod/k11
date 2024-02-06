@@ -18,6 +18,9 @@ class HorizonRepository(val dataSource: DataSource) {
 
     suspend fun continueTransaction(condition: Boolean) = dataSource.continueTransaction(condition)
 
+    suspend fun stopTransaction() = dataSource.stopTransaction()
+
+
     suspend fun setIsKimono(isKimono: Boolean) = dataSource.setIsKimono(isKimono)
     suspend fun printBitMap(bitmap: Bitmap, printingState: PrintingState) = dataSource.printBitMap(bitmap, printingState)
 }

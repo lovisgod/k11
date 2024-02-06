@@ -90,6 +90,8 @@ public class PayProcessor {
 
     private boolean continueTransaction;
 
+    private boolean stopTransaction;
+
     private boolean isKimono;
 
     public PayProcessor(Context context) {
@@ -123,6 +125,10 @@ public class PayProcessor {
 
     public void setContinueTransaction(boolean condition) {
         this.continueTransaction = condition;
+    }
+
+    public void setStopTransaction(boolean condition) {
+        this.stopTransaction = condition;
     }
 
     public void pay(long amount, PayProcessorListener listener) {
@@ -241,6 +247,10 @@ public class PayProcessor {
             mListener.cardRead(CardUtil.getCardTypFromAid(CardManipulatorUtil.INSTANCE.getCardType(cardNo)), cardNo);
             int i = 0;
             while (i < 120) {
+                if (stopTransaction) {
+                    System.out.println("transaction stopped");
+                    break;
+                }
                 if (continueTransaction) {
                     mEmvL2.confirmCardNoResp(true);
                     break;

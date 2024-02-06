@@ -25,7 +25,8 @@ class HorizonAppContainer {
              emvPayUseCase = EmvPayUseCase(repository),
              printBitMapUseCase = PrintBitMapUseCase(repository),
              continueTransactionUseCase = EmvContinueTransactionUseCase(repository),
-             emvSetIsKimonoUseCase = EmvSetIsKimonoUseCase(repository)
+             emvSetIsKimonoUseCase = EmvSetIsKimonoUseCase(repository),
+             stopTransactionUseCase = EmvStopTransactionUseCase(repository)
          )
     }
 

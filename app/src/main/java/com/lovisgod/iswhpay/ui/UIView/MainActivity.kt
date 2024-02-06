@@ -110,13 +110,21 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
             }
         }
 
+//        printBtn.setOnClickListener {
+//            GlobalScope.launch {
+//                withContext(Dispatchers.IO) {
+//                    val bitmap = ToastUtils.loadBitmapFromView(xxxxxx)
+//                    if (bitmap != null) {
+//                        useCases.printBitMapUseCase(bitmap, this@MainActivity)
+//                    }
+//                }
+//            }
+//        }
+
         printBtn.setOnClickListener {
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
-                    val bitmap = ToastUtils.loadBitmapFromView(xxxxxx)
-                    if (bitmap != null) {
-                        useCases.printBitMapUseCase(bitmap, this@MainActivity)
-                    }
+                  useCases.stopTransactionUseCase()
                 }
             }
         }

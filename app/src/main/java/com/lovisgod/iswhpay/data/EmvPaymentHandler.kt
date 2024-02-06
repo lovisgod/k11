@@ -54,6 +54,11 @@ class EmvPaymentHandler {
         payProcessor?.setContinueTransaction(condition)
     }
 
+    fun stopTransaction() {
+        payProcessor?.setStopTransaction(true)
+        stopEmvProcess()
+    }
+
     private fun setPrintLevel(level: Int) {
         try {
             printer!!.printGray = level
@@ -159,7 +164,9 @@ class EmvPaymentHandler {
                      CardReadMode.CONTACT -> {
                          this@EmvPaymentHandler.readCardStates?.onCardDetected()
                      }
-                     CardReadMode.CONTACTLESS -> {}
+                     CardReadMode.CONTACTLESS -> {
+                         this@EmvPaymentHandler.readCardStates?.onCardDetected()
+                     }
                      else -> {}
                  }
             } else {
@@ -294,7 +301,7 @@ class EmvPaymentHandler {
                 }
                 else -> {}
             }
-              println(EmvUtil.showEmvTransResult().toString())
+//              println(EmvUtil.showEmvTransResult().toString())
 //            stopEmvProcess()
         }
 
@@ -313,6 +320,8 @@ class EmvPaymentHandler {
         println("this is called called called")
         try {
             mEmvL2!!.stopEmvProcess()
+            // this is needed to make sure that the condition in payprocessor is not always true
+            payProcessor?.setStopTransaction(false)
         } catch (e: RemoteException) {
             e.printStackTrace()
         } catch (e: NullPointerException) {
