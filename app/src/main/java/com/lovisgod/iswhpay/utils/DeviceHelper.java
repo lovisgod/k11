@@ -49,6 +49,7 @@ public class DeviceHelper {
     public static void initDevices(IswHpayApplication app, Application xApplication) throws RemoteException {
         System.out.println("this is called fifth");
         application = app;
+        System.out.println("<-------- Application has just been set in initDevices -------->");
         mApplication = xApplication;
         if (application == null) {
             return;
@@ -75,7 +76,7 @@ public class DeviceHelper {
                 throw e;
             }
         } else {
-            application.bindDriverService(mApplication.getApplicationContext());
+            application.bindDriverService(mApplication.getApplicationContext(), null);
             reset();
         }
     }
@@ -86,12 +87,15 @@ public class DeviceHelper {
     }
 
     public static void checkState() throws RemoteException {
+        System.out.println("<-------- Entered checkState -------->");
         if (application == null) {
+            System.out.println("<-------- Entered checkState.... application is null -------->");
             throw new RemoteException("Please restart the application.");
         }
 
         if (application.getDevice() == null) {
-            application.bindDriverService(mApplication.getApplicationContext());
+            System.out.println("<-------- Entered checkState.... application.getDevice() is null -------->");
+            application.bindDriverService(mApplication.getApplicationContext(), null);
             reset();
             throw new RemoteException("Device service connection failed, please try again later.");
         }
@@ -158,7 +162,9 @@ public class DeviceHelper {
 
     @SuppressLint("NewApi")
     public static IAidlSys getSysHandle() throws RemoteException {
+        System.out.println("<-------- Entered getSysHandle -------->");
         if (sysHandle == null) {
+            System.out.println("<-------- Entered getSysHandle --> is Null -------->");
             checkState();
             try {
                 return application.getDevice().getSysHandler();

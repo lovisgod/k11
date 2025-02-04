@@ -28,7 +28,14 @@ object IswHpayApplication {
     }
 
     fun getDeviceSerial(): String? {
-        return DeviceHelper.getSysHandle().deviceInfo.getString(DeviceInfo.DEVICE_SN)
+        println("<-------- About to make call for device serial -------->")
+
+        return DeviceHelper.getSysHandle().also {
+            println("<-------- Just got sysHandle, moving on to get device info -------->")
+        }
+            .deviceInfo.also {
+                println("<-------- Just got device info, moving on to get Device serial -------->")
+            }.getString(DeviceInfo.DEVICE_SN)
     }
 
     object container {
@@ -37,9 +44,10 @@ object IswHpayApplication {
     }
 
 
-    fun onCreate(context: Context, application: Application) {
+    fun onCreate(context: Context, application: Application, serialNo: (String?) -> Unit) {
         this.context = application
         println("this is called first")
+        println("<-------- OnCreate called for IswHpayApplication -------->")
 
         Prefs.Builder()
             .setContext(context)
@@ -48,24 +56,38 @@ object IswHpayApplication {
             .setUseDefaultSharedPreference(true)
             .build()
 
-        BaseUtils.init(this.context!!)
-        bindDriverService(context)
+        BaseUtils.init(this.context!!).also {
+            println("<-------- BaseUtils initialized -------->")
+        }
+        bindDriverService(context, { serialNo(it) })
     }
 
-    fun bindDriverService(context: Context) {
+    fun bindDriverService(context: Context, serialNo: ((String?) -> Unit)?) {
+        println("<-------- Bind driver service is called -------->")
+
         println("this is called third")
         PosAidlDeviceServiceUtil.connectDeviceService(context, object : DeviceServiceListen {
+
             override fun onConnected(device: IAidlDevice) {
+                println("<-------- DeviceServiceListen - onConnected is called -------->")
+
                 println("device is connected")
                 println("this is application :::: $this@IswHpayApplication")
                 println(device)
                 this@IswHpayApplication.device = device
                 try {
                     DeviceHelper.reset()
-                    DeviceHelper.initDevices(this@IswHpayApplication, this@IswHpayApplication.context)
+                    println("<-------- Init devices is just about to be called -------->")
+                    DeviceHelper.initDevices(this@IswHpayApplication, this@IswHpayApplication.context).also {
+                        println("<-------- Init devices is called -------->")
+                    }
                     container.horizonAppContainer.emvDataKeyManager.initialize()
                     container.horizonAppContainer.emvPaymentHandler.initialize(context)
                     this@IswHpayApplication.device!!.asBinder().linkToDeath(deathRecipient, 0)
+
+                    if (serialNo != null) {
+                        serialNo(getDeviceSerial())
+                    }
                 } catch (e: RemoteException) {
                     e.printStackTrace()
                 }
@@ -93,7 +115,7 @@ object IswHpayApplication {
             this@IswHpayApplication.device = null
 
             //reBind driver Service
-            this@IswHpayApplication.context?.applicationContext?.let { bindDriverService(it) }
+            this@IswHpayApplication.context?.applicationContext?.let { bindDriverService(it) {} }
         }
     }
 }
