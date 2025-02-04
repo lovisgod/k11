@@ -8,8 +8,8 @@ import android.os.RemoteException
 import com.horizonpay.smartpossdk.PosAidlDeviceServiceUtil
 import com.horizonpay.smartpossdk.PosAidlDeviceServiceUtil.DeviceServiceListen
 import com.horizonpay.smartpossdk.aidl.IAidlDevice
+import com.horizonpay.smartpossdk.data.SysConst.DeviceInfo
 import com.horizonpay.utils.BaseUtils
-import com.lovisgod.iswhpay.domain.use_cases.AllUseCases
 import com.lovisgod.iswhpay.utils.DeviceHelper
 import com.lovisgod.iswhpay.utils.HorizonAppContainer
 import com.pixplicity.easyprefs.library.Prefs
@@ -25,6 +25,10 @@ object IswHpayApplication {
     fun getDevice(): IAidlDevice? {
         println("this is getting here here here here")
         return device
+    }
+
+    fun getDeviceSerial(): String? {
+        return DeviceHelper.getSysHandle().deviceInfo.getString(DeviceInfo.DEVICE_SN)
     }
 
     object container {
