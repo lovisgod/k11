@@ -78,8 +78,8 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
-    implementation files('libs/horizonpay_smartpossdk_V1.11.220410.jar')
-    implementation files('libs/horizon_utils_V1.9.jar')
+    api files('libs/horizonpay_smartpossdk_V1.11.220410.jar')
+    api files('libs/horizon_utils_V1.9.jar')
 
     api 'com.pixplicity.easyprefs:EasyPrefs:1.10.0'
 
