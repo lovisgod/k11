@@ -23,18 +23,18 @@ object IswHpayApplication {
 
 
     fun getDevice(): IAidlDevice? {
-        println("this is getting here here here here")
+//        println("this is getting here here here here")
         return device
     }
 
     fun getDeviceSerial(): String? {
-        println("<-------- About to make call for device serial -------->")
+//        println("<-------- About to make call for device serial -------->")
 
         return DeviceHelper.getSysHandle().also {
-            println("<-------- Just got sysHandle, moving on to get device info -------->")
+//            println("<-------- Just got sysHandle, moving on to get device info -------->")
         }
             .deviceInfo.also {
-                println("<-------- Just got device info, moving on to get Device serial -------->")
+//                println("<-------- Just got device info, moving on to get Device serial -------->")
             }.getString(DeviceInfo.DEVICE_SN)
     }
 
@@ -47,7 +47,7 @@ object IswHpayApplication {
     fun onCreate(context: Context, application: Application, serialNo: (String?) -> Unit) {
         this.context = application
         println("this is called first")
-        println("<-------- OnCreate called for IswHpayApplication -------->")
+//        println("<-------- OnCreate called for IswHpayApplication -------->")
 
         Prefs.Builder()
             .setContext(context)
@@ -57,19 +57,19 @@ object IswHpayApplication {
             .build()
 
         BaseUtils.init(this.context!!).also {
-            println("<-------- BaseUtils initialized -------->")
+//            println("<-------- BaseUtils initialized -------->")
         }
         bindDriverService(context, { serialNo(it) })
     }
 
     fun bindDriverService(context: Context, serialNo: ((String?) -> Unit)?) {
-        println("<-------- Bind driver service is called -------->")
+//        println("<-------- Bind driver service is called -------->")
 
         println("this is called third")
         PosAidlDeviceServiceUtil.connectDeviceService(context, object : DeviceServiceListen {
 
             override fun onConnected(device: IAidlDevice) {
-                println("<-------- DeviceServiceListen - onConnected is called -------->")
+//                println("<-------- DeviceServiceListen - onConnected is called -------->")
 
                 println("device is connected")
                 println("this is application :::: $this@IswHpayApplication")
@@ -77,9 +77,9 @@ object IswHpayApplication {
                 this@IswHpayApplication.device = device
                 try {
                     DeviceHelper.reset()
-                    println("<-------- Init devices is just about to be called -------->")
+//                    println("<-------- Init devices is just about to be called -------->")
                     DeviceHelper.initDevices(this@IswHpayApplication, this@IswHpayApplication.context).also {
-                        println("<-------- Init devices is called -------->")
+//                        println("<-------- Init devices is called -------->")
                     }
                     container.horizonAppContainer.emvDataKeyManager.initialize()
                     container.horizonAppContainer.emvPaymentHandler.initialize(context)
