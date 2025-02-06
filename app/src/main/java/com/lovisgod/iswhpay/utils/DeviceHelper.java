@@ -90,7 +90,7 @@ public class DeviceHelper {
 //        System.out.println("<-------- Entered checkState -------->");
         if (application == null) {
 //            System.out.println("<-------- Entered checkState.... application is null -------->");
-//            throw new RemoteException("Please restart the application.");
+            throw new RemoteException("Please restart the application.");
         }
 
         if (application.getDevice() == null) {
@@ -109,7 +109,7 @@ public class DeviceHelper {
             try {
                 return application.getDevice().getPinpad(false);
             } catch (RemoteException e) {
-//                throw new RemoteException("PinPad service acquisition failed, please try again later.");
+                throw new RemoteException("PinPad service acquisition failed, please try again later.");
             }
         } else {
             return pinpad;
