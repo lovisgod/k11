@@ -97,7 +97,7 @@ public class DeviceHelper {
 //            System.out.println("<-------- Entered checkState.... application.getDevice() is null -------->");
             application.bindDriverService(mApplication.getApplicationContext(), null);
             reset();
-//            throw new RemoteException("Device service connection failed, please try again later.");
+            throw new RemoteException("Device service connection failed, please try again later.");
         }
     }
 
