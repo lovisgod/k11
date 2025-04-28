@@ -10,13 +10,13 @@ public class CardUtil {
 
     public static String getCardTypFromAid(String aid) {
         if (aid == null || aid.length() < 10) {
-            return "";
+            return "Unknown";
         }
         Log.d(TAG, "getCardTypFromAid: " + aid.length());
         if (cardType.containsKey(aid.substring(0, 10))) {
             return cardType.get(aid.substring(0, 10));
         }
-        return "";
+        return "Unknown";
     }
 
     private static Map<String, String> cardType = new HashMap<String, String>();

@@ -136,6 +136,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
        }
     }
 
+
     override fun onRemoveCard() {
         this.runOnUiThread {
             ToastUtils.showLong("Kindly remove your card", this)
@@ -199,6 +200,16 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
 
     override fun onError(error: Int) {
         println("printing error::: $error")
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    override fun onCardRead(cardType: String, cardNo: String) {
+        super.onCardRead(cardType, cardNo)
+        println("$cardType card has been read")
+        useCases = IswHpayApplication.container.horizonPayUseCase
+        GlobalScope.launch {
+            useCases.continueTransactionUseCase.invoke(true)
+        }
     }
 
 
