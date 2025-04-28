@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ScrollView
+import android.widget.Toast
 import com.lovisgod.iswhpay.IswHpayApplication
 import com.lovisgod.iswhpay.R
 import com.lovisgod.iswhpay.domain.SampleNetworkRepository
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
     lateinit var startpay: Button
     lateinit var downloadtoken: Button
     lateinit var printBtn: Button
+    lateinit var printSerial: Button
     lateinit var xxxxxx : ScrollView
     lateinit var useCases: AllUseCases
     lateinit var accountType: AccountType
@@ -39,7 +41,9 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        IswHpayApplication.onCreate(this, SampleApplication())
+        IswHpayApplication.onCreate(this, SampleApplication()) { serial ->
+            println("Serial ooo ------> $serial")
+        }
 
         loadAid = findViewById(R.id.loadaid)
         loadPinKeyBtn = findViewById(R.id.pinkey)
@@ -47,6 +51,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
         startpay = findViewById(R.id.startPay)
         downloadtoken = findViewById(R.id.downloadToken)
         printBtn = findViewById(R.id.printScreen)
+        printSerial = findViewById(R.id.printSerial)
         xxxxxx = findViewById(R.id.vvvv)
 
        handleClicks()
@@ -127,6 +132,13 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
                   useCases.stopTransactionUseCase()
                 }
             }
+        }
+
+        printSerial.setOnClickListener {
+            val serial = IswHpayApplication.getDeviceSerial()
+            println("serial number ::: $serial")
+            Toast.makeText(this@MainActivity, "Serial number --> $serial", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 

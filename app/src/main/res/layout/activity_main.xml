@@ -9,7 +9,7 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <Button
         android:id="@+id/pinkey"
@@ -71,6 +71,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/downloadToken" />
+
+    <Button
+        android:id="@+id/printSerial"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Print Serial"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/printScreen" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
