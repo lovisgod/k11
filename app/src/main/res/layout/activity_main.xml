@@ -63,6 +63,16 @@
         app:layout_constraintTop_toBottomOf="@+id/startPay" />
 
     <Button
+        android:id="@+id/continueTxn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Continue Transaction"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/downloadToken" />
+
+    <Button
         android:id="@+id/printScreen"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
@@ -70,7 +80,7 @@
         android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/downloadToken" />
+        app:layout_constraintTop_toBottomOf="@+id/continueTxn" />
 
     <Button
         android:id="@+id/printSerial"

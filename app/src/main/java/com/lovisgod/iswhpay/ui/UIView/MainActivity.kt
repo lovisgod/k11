@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
     lateinit var loadTerminalConfig: Button
     lateinit var startpay: Button
     lateinit var downloadtoken: Button
+    lateinit var continueTxnBtn: Button
     lateinit var printBtn: Button
     lateinit var printSerial: Button
     lateinit var xxxxxx : ScrollView
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
         loadTerminalConfig = findViewById(R.id.loadTerminal)
         startpay = findViewById(R.id.startPay)
         downloadtoken = findViewById(R.id.downloadToken)
+        continueTxnBtn = findViewById(R.id.continueTxn)
         printBtn = findViewById(R.id.printScreen)
         printSerial = findViewById(R.id.printSerial)
         xxxxxx = findViewById(R.id.vvvv)
@@ -124,6 +126,15 @@ class MainActivity : AppCompatActivity(), ReadCardStates, PrintingState {
 //                    }
 //                }
 //            }
+//        }
+
+        continueTxnBtn.setOnClickListener {
+            GlobalScope.launch {
+                withContext(Dispatchers.IO) {
+                  useCases.continueTransactionUseCase(true)
+                }
+            }
+        }
 //        }
 
         printBtn.setOnClickListener {
