@@ -698,7 +698,7 @@ public class PayProcessor {
               String ksnCount = Constants.INSTANCE.getNextKsnCounter();
               String ksnString = Prefs.getString("KSN", "") + ksnCount;
 
-              mPinPad.inputOnlinePin(bundle, new int[]{4, 4}, 10, sPAN, 0, PinpadConst.PinAlgorithmMode.ISO9564FMT1, new AidlPinPadInputListener.Stub() {
+              mPinPad.inputOnlinePin(bundle, new int[]{4, 4}, 60, sPAN, 0, PinpadConst.PinAlgorithmMode.ISO9564FMT1, new AidlPinPadInputListener.Stub() {
                 @Override
                 public void onConfirm(byte[] data, boolean noPin, String s) throws RemoteException {
                     System.out.println("info::: datatatata:::::" + data);
@@ -775,7 +775,7 @@ public class PayProcessor {
         }
 
         try {
-            mPinPad.inputOfflinePin(bundle, new int[]{4}, 30, new AidlPinPadInputListener.Stub() {
+            mPinPad.inputOfflinePin(bundle, new int[]{4}, 60, new AidlPinPadInputListener.Stub() {
                 @Override
                 public void onConfirm(byte[] data, boolean noPin, String s) throws RemoteException {
                     System.out.println("info::::: offline pin confirm called");
