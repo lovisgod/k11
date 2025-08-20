@@ -748,6 +748,7 @@ public class PayProcessor {
                 @Override
                 public void onError(int errorCode) throws RemoteException {
                     System.out.println("info::::: on error for pin called");
+                    System.out.println("info::::: pin error == $errorCode");
                     AppLog.d(LOG_TAG, "onError: code:" + errorCode);
                     mEmvL2.requestPinResp(null, false);
                 }
