@@ -240,7 +240,7 @@ class EmvPaymentHandler {
             requestIccData.apply {
                 EMC_CARD_ = creditCard
                 iccAsString = EmvUtil.getTlvStringData()
-                CARD_HOLDER_NAME = creditCard?.holderName.toString()
+                CARD_HOLDER_NAME = creditCard.holderName ?: "CUSTOMER"
                 EMV_CARD_PIN_DATA = if (isOnlinePin) EmvPinData(creditCard.ksnData.toString(), creditCard.pin.toString()) else EmvPinData()
             }
             var responseEntity = this@EmvPaymentHandler.readCardStates?.sendTransactionOnline(requestIccData)

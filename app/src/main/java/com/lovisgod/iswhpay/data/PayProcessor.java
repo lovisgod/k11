@@ -515,11 +515,13 @@ public class PayProcessor {
             switch (emvTransOutputData.getAcType()) {
                 case EmvConstant.EmvACType.AAC: //Trans End
                     System.out.println("info ::::: ACC called");
+                    mOnlineRespEntity = mListener.onPerformOnlineProcessing(creditCard, isOnlinePin); // Forcing the Transaction Online
                     if (mOnlineRespEntity == null) {
                         System.out.println("info ::::: no response entity");
                         transactionResultCode = TransactionResultCode.DECLINED_BY_OFFLINE;
                     } else if ("00".equals(mOnlineRespEntity.getRespCode())) {
-                        transactionResultCode = TransactionResultCode.DECLINED_BY_TERMINAL_NEED_REVERSE;
+                        transactionResultCode = TransactionResultCode.APPROVED_BY_ONLINE;
+//                        transactionResultCode = TransactionResultCode.DECLINED_BY_TERMINAL_NEED_REVERSE;
                     } else {
                         transactionResultCode = TransactionResultCode.DECLINED_BY_ONLINE;
                     }
